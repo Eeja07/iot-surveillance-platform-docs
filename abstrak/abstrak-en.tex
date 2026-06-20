@@ -1,0 +1,29 @@
+\begin{center}
+	\large\textbf{ABSTRACT}
+\end{center}
+
+\addcontentsline{toc}{chapter}{ABSTRACT}
+
+\vspace{2ex}
+
+\begingroup
+% Menghilangkan padding
+\setlength{\tabcolsep}{0pt}
+
+\noindent
+\begin{tabularx}{\textwidth}{l >{\centering}m{3em} X}
+	\emph{Name}     & : & \name{}         \\
+	
+	\emph{Title}    & : & \engtatitle{}   \\
+	
+	\emph{Advisors} & : & 1. \advisor{}   \\
+	&   & 2. \coadvisor{} \\
+\end{tabularx}
+\endgroup
+
+% Ubah paragraf berikut dengan abstrak dari tugas akhir dalam Bahasa Inggris
+\emph{
+	The advancement of Unmanned Aerial Vehicle (UAV) technology presents significant opportunities to accelerate Search and Rescue (SAR) operations in hard-to-reach disaster areas. This research designs an autonomous system on a Holybro S500 drone for real-time victim detection based on edge computing using a Raspberry Pi 5 and a webcam. The system integrates a Pixhawk 6C Flight Controller with flight control executed via the MAVLink protocol (MAVSDK Python). Based on evaluations, a fine-tuned YOLOv8n model in ONNX format (320x320 resolution) was selected over a pose estimation model due to its superior consistency in maintaining bounding boxes in outdoor environments. The system implements an asynchronous multi-threaded architecture and an isolated electrical system using a 5A UBEC regulator to prevent voltage sag. Real-world flight testing validated the success of the persistent Scout Mission navigation through the \texttt{SCAN $\rightarrow$ APPROACH $\rightarrow$ DOCUMENT $\rightarrow$ DISPLACING} state machine cycle without requiring a return-to-home after single target acquisition. Furthermore, a multi-layered Safety System successfully mitigated altitude drift anomalies automatically. This system successfully integrates visual perception, decision-making, and autonomous monitoring transmission, producing a robust and efficient SAR drone prototype.}
+
+% Ubah kata-kata berikut dengan kata kunci dari tugas akhir dalam Bahasa Inggris
+\emph{Keywords}: \emph{Autonomous Drone, Edge Computing, MAVSDK, Raspberry Pi 5, Search and Rescue, YOLOv8n}

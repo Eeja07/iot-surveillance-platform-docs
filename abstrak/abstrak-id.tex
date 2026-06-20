@@ -1,0 +1,26 @@
+\begin{center}
+	\large\textbf{ABSTRAK}
+\end{center}
+
+\addcontentsline{toc}{chapter}{ABSTRAK}
+
+\vspace{2ex}
+\begingroup
+% Menghilangkan padding
+\setlength{\tabcolsep}{0pt}
+
+\noindent
+\begin{tabularx}{\textwidth}{l >{\centering}m{2em} X}
+	Nama Mahasiswa    & : & \name{}         \\
+	
+	Judul Tugas Akhir & : & \tatitle{}      \\
+	
+	Pembimbing        & : & 1. \advisor{}   \\
+	&   & 2. \coadvisor{} \\
+\end{tabularx} 
+\endgroup
+
+% Ubah paragraf berikut dengan abstrak dari tugas akhir
+Kemajuan teknologi \textit{Unmanned Aerial Vehicle} (UAV) atau drone memberikan peluang besar untuk mempercepat operasi \textit{Search and Rescue} (SAR) di area bencana yang sulit dijangkau. Penelitian ini merancang sistem otonom pada drone Holybro S500 untuk deteksi korban secara \textit{real-time} berbasis \textit{edge computing} menggunakan Raspberry Pi 5 dan kamera \textit{webcam}. Sistem mengintegrasikan \textit{Flight Controller} Pixhawk 6C dan kendali penerbangan via protokol MAVLink (MAVSDK Python). Berdasarkan evaluasi, model YOLOv8n hasil \textit{fine-tuning} berformat ONNX (resolusi 320x320) dipilih menggantikan model \textit{pose estimation} karena lebih konsisten mempertahankan \textit{bounding box} pada lingkungan luar ruangan. Sistem ini mengimplementasikan arsitektur \textit{multi-thread} asinkron dan sistem kelistrikan terisolasi menggunakan regulator UBEC 5A untuk mencegah \textit{voltage sag}. Hasil pengujian penerbangan nyata memvalidasi keberhasilan navigasi \textit{Scout Mission} secara persisten melalui siklus \textit{state machine} \texttt{SCAN $\rightarrow$ APPROACH $\rightarrow$ DOCUMENT $\rightarrow$ DISPLACING} tanpa memerlukan pendaratan setelah menemukan satu target. Selain itu, \textit{Safety System} berlapis terbukti berhasil memitigasi anomali penurunan ketinggian secara otomatis. Sistem ini berhasil mengintegrasikan persepsi visual, pengambilan keputusan, dan transmisi pemantauan otonom, menghasilkan purwarupa drone SAR yang tangguh dan efisien.
+% Ubah kata-kata berikut dengan kata kunci dari tugas akhir
+Kata Kunci: Drone Otonom, Komputasi Edge, MAVSDK, Raspberry Pi 5, Pencarian dan Penyelamatan, YOLOv8n
