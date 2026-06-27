@@ -17,6 +17,30 @@ Penelitian yang dilakukan oleh Ahmad Akmal Rijal mengembangkan platform MIOTVisi
 
 Berdasarkan penelitian terdahulu, telah dirintis aplikasi mobile Flutter untuk monitoring kamera ESP32-CAM serta platform web MIOTVision berbasis Laravel untuk pengelolaan perangkat CCTV berbasis IoT. Penelitian ini memperluas (extends) dan meningkatkan (enhances) fungsionalitas sistem tersebut dengan mengintegrasikan kedua antarmuka dalam satu platform real-time yang lebih stabil. Fokus penelitian ini mencakup implementasi komunikasi berbasis WebSocket penuh menggunakan Laravel Reverb untuk meminimalkan ketergantungan pada HTTP Polling, penerapan motion detection dan intruder detection, monitoring telemetri perangkat yang komprehensif, serta stabilisasi MQTT over WSS. Selain itu, dilakukan penguatan infrastruktur berupa mekanisme retensi basis data MySQL, pembersihan objek MinIO, pembaruan firmware OTA, dan deployment terpusat pada server Intel NUC berbasis Docker dengan Webmin dan Cloudflared Tunnel untuk meningkatkan pemeliharaan dan keamanan operasional.
 
+Tabel \ref{tab:perbandingan_penelitian} menunjukkan posisi penelitian ini secara terperinci dibandingkan dengan penelitian terdahulu yang mendasarinya.
+
+\begin{table}[H]
+	\centering
+	\caption{Perbandingan Kontribusi Penelitian Terdahulu dan Penelitian Ini}
+	\label{tab:perbandingan_penelitian}
+	\begin{tabular}{|l|c|c|c|}
+		\hline
+		\textbf{Fitur / Komponen} & \textbf{Alhabsyi \cite{ali2025}} & \textbf{Rijal \cite{rijal2025}} & \textbf{Penelitian Ini} \\
+		\hline
+		Platform Aplikasi Mobile & Flutter & - & Flutter (Ditingkatkan) \\
+		Platform Web Monitoring & - & Laravel & Laravel (Laravel Reverb) \\
+		Komunikasi Data & HTTP/TCP JSON & MQTT \& HTTP Polling & MQTT over WSS \& WebSocket \\
+		Penyimpanan Citra & - & MinIO & MinIO (Laravel Scheduler Cleanup) \\
+		Deteksi Gerakan & - & - & Implementasi (Detection Service) \\
+		Deteksi Penyusup (Server) & Integrasi Awal & - & Integrasi Penuh \\
+		Pemantauan Telemetri & - & - & Implementasi Komprehensif \\
+		Pembaruan Firmware & - & - & Dukungan OTA \\
+		Retensi Basis Data & - & - & Implementasi (MySQL Event) \\
+		Deployment \& Akses & Lokal & Lokal & Cloudflared Tunnel \& Webmin \\
+		\hline
+	\end{tabular}
+\end{table}
+
 \section{Dasar Teori}
 
 \subsection{Internet of Things (IoT)}

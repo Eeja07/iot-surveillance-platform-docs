@@ -70,11 +70,11 @@ Arsitektur sistem yang dibangun memperluas infrastruktur MIOTVision terdahulu, y
 %	\label{fig:arsitektur}
 %%\end{figure}
 
-Pada arsitektur tersebut, ESP32-CAM berfungsi sebagai perangkat akuisisi citra yang mengirimkan data telemetri dan gambar ke broker MQTT EMQX. Data yang diterima kemudian diproses oleh backend Laravel untuk disimpan pada MySQL (dengan kebijakan retensi data) dan MinIO (dengan pembersihan otomatis). Selanjutnya, informasi telemetri dan deteksi gerakan diteruskan secara real-time ke website monitoring menggunakan Laravel Reverb dan ke aplikasi mobile melalui push notification.
+Pada arsitektur tersebut, ESP32-CAM berfungsi untuk melakukan akuisisi citra, pengumpulan telemetri, dan publikasi MQTT over WSS ke broker EMQX. Data gambar yang masuk kemudian diteruskan oleh backend Laravel ke layanan deteksi (detection service) terpisah di server Intel NUC. Di dalam layanan deteksi, citra dianalisis secara berurutan melalui algoritma deteksi gerakan (motion detection) dan deteksi penyusup (intruder detection). Jika terdeteksi adanya aktivitas atau penyusupan, status terupdate akan disiarkan ke dashboard website secara real-time via Laravel Reverb dan notifikasi dikirimkan ke aplikasi mobile.
 
 \subsection{Perancangan Alur Komunikasi Data}
 
-Proses komunikasi data dimulai dari pengambilan citra atau pembacaan data telemetri oleh ESP32-CAM. Data tersebut kemudian dikirimkan secara aman ke server menggunakan protokol MQTT over WSS melalui broker EMQX. Backend Laravel memproses data tersebut, menyimpan metadata ke database MySQL dan menyimpan berkas citra ke object storage MinIO. Informasi terbaru kemudian ditransmisikan secara real-time ke antarmuka website menggunakan Laravel Reverb, serta ke aplikasi mobile melalui layanan push notification.
+Proses komunikasi data dimulai dari akuisisi citra dan pengumpulan data telemetri oleh ESP32-CAM, yang kemudian dipublikasikan melalui protokol MQTT over WSS ke broker EMQX. Backend Laravel menerima data tersebut, menyimpan data telemetri ke MySQL dan berkas citra ke MinIO. Citra tersebut kemudian diteruskan ke layanan deteksi terisolasi di server untuk menjalankan deteksi gerakan (motion detection) dan deteksi penyusup (intruder detection). Hasil analisis kemudian dikirimkan secara real-time ke antarmuka website menggunakan Laravel Reverb, serta ke aplikasi mobile melalui layanan push notification.
 
 \subsection{Perancangan Basis Data}
 
@@ -92,7 +92,7 @@ Tabel utama yang digunakan meliputi:
 
 \subsection{Perancangan Motion Detection}
 
-Motion detection dirancang untuk berjalan langsung secara lokal pada perangkat keras ESP32-CAM (sisi edge) guna mendeteksi perubahan kondisi pada area pengamatan sebelum data citra dikirimkan ke server. Metode ini bekerja dengan membandingkan frame yang diperoleh kamera terhadap frame sebelumnya. Apabila perubahan yang terdeteksi melebihi nilai ambang batas yang telah ditentukan, sistem akan menganggap terdapat aktivitas pada area pengawasan dan memicu proses pengambilan serta pengiriman data gambar.
+Motion detection dirancang untuk berjalan pada layanan deteksi (detection service) di server Intel NUC. Alur ini menerima data citra hasil akuisisi ESP32-CAM yang dikirimkan melalui broker MQTT, lalu membandingkan frame citra yang baru masuk terhadap frame citra sebelumnya secara asinkron. Apabila perubahan piksel antar frame melebihi nilai ambang batas yang ditentukan, sistem menganggap terdapat aktivitas gerakan pada area pengawasan dan melanjutkan citra ke tahap deteksi penyusup (intruder detection).
 
 \subsection{Perancangan Monitoring Telemetri}
 
@@ -134,7 +134,7 @@ Aplikasi mobile berbasis Flutter yang telah dirintis sebelumnya ditingkatkan fun
 
 \subsection{Implementasi Deteksi Gerakan dan Deteksi Penyusup}
 
-Deteksi gerakan (motion detection) diimplementasikan pada sisi edge perangkat ESP32-CAM dengan membandingkan perbedaan nilai intensitas piksel antar frame citra yang berurutan. Layanan deteksi penyusup (intruder detection) diintegrasikan untuk menganalisis citra hasil tangkapan kamera secara real-time dan mengidentifikasi objek manusia.
+Deteksi gerakan (motion detection) diimplementasikan di dalam layanan deteksi (detection service) terpisah pada server Intel NUC dengan membandingkan perbedaan nilai intensitas piksel antar frame citra hasil akuisisi ESP32-CAM yang diterima secara berurutan. Setelah gerakan terdeteksi, citra tersebut diproses lebih lanjut oleh modul deteksi penyusup (intruder detection) untuk mengidentifikasi adanya objek manusia secara real-time.
 
 \subsection{Implementasi Pemantauan Telemetri}
 
