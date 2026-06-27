@@ -3,7 +3,7 @@
 
 \section{Metodologi Penelitian}
 
-Metodologi penelitian yang digunakan pada penelitian ini terdiri dari beberapa tahapan, yaitu analisis kebutuhan sistem, perancangan sistem, implementasi sistem, serta pengujian sistem. Tahapan-tahapan tersebut dilakukan untuk menghasilkan platform monitoring CCTV berbasis ESP32-CAM yang mampu melakukan pemantauan secara real-time melalui website dan aplikasi mobile.
+Metodologi penelitian yang digunakan dalam penelitian ini terdiri dari beberapa tahapan, yaitu analisis kebutuhan sistem, perancangan sistem, implementasi sistem, serta pengujian sistem. Tahapan-tahapan tersebut dilakukan untuk mengembangkan dan meningkatkan platform monitoring CCTV berbasis ESP32-CAM (MIOTVision) yang mampu melakukan pemantauan secara real-time melalui integrasi website dan aplikasi mobile yang lebih stabil.
 
 \section{Analisis Kebutuhan Sistem}
 
@@ -45,7 +45,7 @@ Perangkat lunak yang digunakan pada penelitian ini ditunjukkan pada Tabel \ref{t
 		1 & Debian 12 \\
 		2 & Docker \\
 		3 & Laravel \\
-		4 & React Native \\
+		4 & Flutter \\
 		5 & MySQL \\
 		6 & MinIO \\
 		7 & EMQX \\
@@ -61,20 +61,20 @@ Tahap perancangan dilakukan untuk menentukan arsitektur sistem, alur komunikasi 
 
 \subsection{Arsitektur Sistem}
 
-Arsitektur sistem yang dikembangkan terdiri dari perangkat ESP32-CAM, broker MQTT, server backend, basis data, object storage, website monitoring, dan aplikasi mobile.
+Arsitektur sistem yang dibangun memperluas infrastruktur MIOTVision terdahulu, yang mengintegrasikan perangkat ESP32-CAM, broker MQTT (EMQX), server backend Laravel, basis data MySQL, object storage MinIO, serta antarmuka website dan aplikasi mobile secara terpusat.
 
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=0.9\textwidth]{gambar/arsitektur_sistem.pdf}
-	\caption{Arsitektur Sistem}
-	\label{fig:arsitektur}
-\end{figure}
+%\begin{figure}[H]
+%	\centering
+%	\includegraphics[width=0.9\textwidth]{gambar/arsitektur_sistem.pdf}
+%	\caption{Arsitektur Sistem}
+%	\label{fig:arsitektur}
+%%\end{figure}
 
-Pada arsitektur tersebut, ESP32-CAM berfungsi sebagai perangkat akuisisi citra yang mengirimkan data ke broker MQTT. Data yang diterima kemudian diproses oleh backend Laravel untuk disimpan pada MySQL dan MinIO. Selanjutnya informasi tersebut diteruskan ke website dan aplikasi mobile melalui mekanisme WebSocket dan push notification.
+Pada arsitektur tersebut, ESP32-CAM berfungsi sebagai perangkat akuisisi citra yang mengirimkan data telemetri dan gambar ke broker MQTT EMQX. Data yang diterima kemudian diproses oleh backend Laravel untuk disimpan pada MySQL (dengan kebijakan retensi data) dan MinIO (dengan pembersihan otomatis). Selanjutnya, informasi telemetri dan deteksi gerakan diteruskan secara real-time ke website monitoring menggunakan Laravel Reverb dan ke aplikasi mobile melalui push notification.
 
 \subsection{Perancangan Alur Komunikasi Data}
 
-Proses komunikasi data dimulai dari pengambilan citra oleh ESP32-CAM. Citra yang berhasil diperoleh kemudian dikirimkan ke server menggunakan protokol MQTT melalui broker EMQX. Backend Laravel menerima data tersebut, menyimpan metadata ke MySQL dan menyimpan file citra ke MinIO. Informasi terbaru kemudian dikirimkan secara real-time ke website menggunakan WebSocket serta ke aplikasi mobile melalui layanan notifikasi.
+Proses komunikasi data dimulai dari pengambilan citra atau pembacaan data telemetri oleh ESP32-CAM. Data tersebut kemudian dikirimkan secara aman ke server menggunakan protokol MQTT over WSS melalui broker EMQX. Backend Laravel memproses data tersebut, menyimpan metadata ke database MySQL dan menyimpan berkas citra ke object storage MinIO. Informasi terbaru kemudian ditransmisikan secara real-time ke antarmuka website menggunakan Laravel Reverb, serta ke aplikasi mobile melalui layanan push notification.
 
 \subsection{Perancangan Basis Data}
 
@@ -130,7 +130,43 @@ Website monitoring dikembangkan menggunakan framework frontend yang terhubung de
 
 \subsection{Implementasi Aplikasi Mobile}
 
-Aplikasi mobile dikembangkan menggunakan React Native. Aplikasi menyediakan fitur monitoring perangkat, melihat hasil tangkapan kamera, menerima push notification, serta menampilkan status perangkat secara real-time.
+Aplikasi mobile berbasis Flutter yang telah dirintis sebelumnya ditingkatkan fungsionalitasnya untuk mendukung penerimaan push notification secara real-time, monitoring telemetri perangkat secara visual, serta integrasi status operasional CCTV.
+
+\subsection{Implementasi Deteksi Gerakan dan Deteksi Penyusup}
+
+Deteksi gerakan (motion detection) diimplementasikan pada sisi edge perangkat ESP32-CAM dengan membandingkan perbedaan nilai intensitas piksel antar frame citra yang berurutan. Layanan deteksi penyusup (intruder detection) diintegrasikan untuk menganalisis citra hasil tangkapan kamera secara real-time dan mengidentifikasi objek manusia.
+
+\subsection{Implementasi Pemantauan Telemetri}
+
+Pemantauan telemetri perangkat dilakukan secara periodik dengan mengirimkan data operasional ESP32-CAM ke server melalui protokol MQTT. Data yang dikirimkan meliputi parameter Received Signal Strength Indicator (RSSI), uptime perangkat, free heap memory, reset reason, serta tingkat keberhasilan pengambilan gambar dan publikasi data.
+
+\subsection{Implementasi Notifikasi Real-time}
+
+Notifikasi real-time diimplementasikan menggunakan layanan push notification untuk mengirimkan peringatan keamanan instan ke perangkat mobile pengguna segera setelah terdeteksi adanya penyusupan atau gerakan mencurigakan pada area pengawasan.
+
+\subsection{Integrasi Laravel Reverb}
+
+Laravel Reverb diintegrasikan pada backend untuk menangani komunikasi WebSocket berskala tinggi secara asinkron. Hal ini memungkinkan server mengirimkan pembaruan status perangkat, data telemetri terbaru, dan notifikasi deteksi langsung ke dashboard website secara real-time tanpa overhead HTTP polling.
+
+\subsection{Stabilisasi MQTT over WSS}
+
+Stabilisasi komunikasi MQTT over WebSocket Secure (WSS) dilakukan untuk menjamin transmisi data yang aman dan andal antara perangkat ESP32-CAM dan broker EMQX melalui port web standar dengan dukungan mekanisme auto-reconnect.
+
+\subsection{Implementasi Pembaruan Firmware OTA}
+
+Dukungan pembaruan firmware secara nirkabel (Over-the-Air/OTA) diimplementasikan agar perangkat ESP32-CAM dapat mengunduh berkas biner firmware baru secara asinkron dari server backend Laravel dan melakukan pembaruan kode program secara otomatis.
+
+\subsection{Implementasi Kebijakan Retensi MySQL}
+
+Mekanisme retensi basis data MySQL diimplementasikan dengan membuat prosedur terjadwal (event scheduler) untuk membersihkan data log telemetri dan riwayat deteksi yang telah melewati batas waktu penyimpanan tertentu agar ukuran basis data tetap optimal.
+
+\subsection{Implementasi Pembersihan Otomatis MinIO}
+
+Pembersihan otomatis pada MinIO Object Storage diimplementasikan melalui kebijakan siklus hidup objek (lifecycle policy) untuk menghapus berkas citra deteksi lama secara terjadwal guna menghemat ruang penyimpanan.
+
+\subsection{Deployment Layanan Deteksi}
+
+Layanan deteksi penyusup dijalankan sebagai kontainer Docker terpisah di server Intel NUC untuk memisahkan beban kerja komputasi visi komputer dari server aplikasi utama guna menjamin kestabilan platform.
 
 \section{Pengujian Sistem}
 

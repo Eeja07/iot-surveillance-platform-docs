@@ -10,38 +10,38 @@ Perkembangan teknologi Internet of Things (IoT) memungkinkan berbagai perangkat 
 
 ESP32-CAM merupakan salah satu perangkat yang banyak dimanfaatkan dalam pengembangan sistem monitoring karena memiliki modul kamera dan konektivitas Wi-Fi dalam satu perangkat dengan biaya yang relatif rendah. Namun, sistem monitoring berbasis kamera memerlukan infrastruktur yang mampu mengelola pengiriman data, penyimpanan gambar, pemantauan kondisi perangkat, serta penyajian informasi kepada pengguna secara real-time.
 
-Pada penelitian ini dikembangkan sebuah platform monitoring CCTV berbasis ESP32-CAM yang terintegrasi dengan website dan aplikasi mobile. Sistem memanfaatkan protokol MQTT untuk komunikasi data antar perangkat dan WebSocket untuk menampilkan pembaruan data secara real-time pada website tanpa mekanisme polling. Data hasil tangkapan kamera disimpan pada object storage, sedangkan informasi perangkat dan aktivitas sistem disimpan pada basis data terpusat.
+Pada penelitian ini, dilakukan pengembangan lanjutan dan peningkatan fungsionalitas platform monitoring CCTV berbasis ESP32-CAM (MIOTVision) yang terintegrasi dengan website dan aplikasi mobile. Penelitian ini memperluas sistem yang telah dirintis sebelumnya dengan menstabilkan protokol MQTT over WSS serta mengintegrasikan Laravel Reverb untuk mendukung komunikasi real-time. Data hasil tangkapan kamera disimpan pada object storage MinIO yang dilengkapi dengan mekanisme pembersihan otomatis (object cleanup), sedangkan metadata perangkat dan aktivitas sistem dikelola melalui basis data terpusat MySQL dengan mekanisme retensi data.
 
-Selain itu, sistem dilengkapi dengan fitur motion detection untuk mendeteksi adanya aktivitas pada area pengawasan, monitoring telemetri perangkat untuk mengetahui kondisi kamera secara real-time, serta notifikasi mobile yang dapat memberikan informasi kepada pengguna ketika terjadi aktivitas yang terdeteksi oleh sistem. Seluruh layanan dijalankan pada server Intel NUC menggunakan teknologi containerisasi sehingga memudahkan proses pengelolaan dan pengembangan sistem.
+Selain itu, sistem ditingkatkan dengan mengimplementasikan fitur deteksi penyusup (intruder detection), deteksi gerakan (motion detection) untuk mengidentifikasi pergerakan pada area pengawasan, monitoring telemetri perangkat secara komprehensif, dukungan pembaruan firmware secara nirkabel (OTA), serta notifikasi mobile secara real-time. Seluruh layanan dijalankan pada server Intel NUC menggunakan Docker untuk meningkatkan kemudahan pemeliharaan sistem, dideploy menggunakan Cloudflared Tunnel untuk akses publik yang aman, serta dikelola melalui Webmin untuk memudahkan proses administrasi server.
 
 \section{Rumusan Masalah}
 Berdasarkan uraian latar belakang di atas, rumusan masalah dalam penelitian ini didefinisikan secara lebih spesifik sebagai berikut:
 \begin{enumerate}
-	\item Bagaimana merancang dan mengimplementasikan platform monitoring CCTV berbasis ESP32-CAM yang dapat diakses melalui website dan aplikasi mobile secara real-time?
-	\item Bagaimana membangun mekanisme komunikasi data dan penyimpanan terpusat menggunakan MQTT, WebSocket, dan server Intel NUC sehingga sistem dapat berjalan secara stabil dan efisien?
-	\item Bagaimana mengimplementasikan fitur motion detection, notifikasi mobile, dan monitoring kondisi perangkat untuk mendukung proses pengawasan dan pengelolaan sistem?
+	\item Bagaimana memperluas dan meningkatkan fungsionalitas platform monitoring CCTV berbasis ESP32-CAM (MIOTVision) agar terintegrasi secara stabil dan real-time dengan website serta aplikasi mobile?
+	\item Bagaimana mengoptimalkan komunikasi data berbasis MQTT over WSS dan Laravel Reverb serta mengelola penyimpanan terpusat menggunakan mekanisme retensi data MySQL dan pembersihan otomatis objek MinIO?
+	\item Bagaimana mengimplementasikan fitur deteksi gerakan (motion detection), deteksi penyusup (intruder detection), notifikasi mobile real-time, monitoring telemetri perangkat, serta dukungan OTA firmware untuk keandalan dan kemudahan pemeliharaan sistem?
 \end{enumerate}
 
 \section{Tujuan Penelitian}
 Sejalan dengan rumusan masalah, penelitian ini bertujuan untuk:
 \begin{enumerate}
-	\item Menghasilkan rancang bangun perangkat keras dan kelistrikan sistem drone otonom yang mampu menyuplai daya komputasi secara stabil bagi perangkat \textit{edge} Raspberry Pi 5 tanpa memicu \textit{voltage sag}.
-	\item Mengevaluasi performa iterasi model YOLOv8n format ONNX yang dijalankan pada sistem operasi \textit{headless} untuk meraih keseimbangan \textit{framerate} (FPS) dan latensi terbaik.
-	\item Membangun mesin logika otonom tipe \textit{Persistent Multi-Target Scouting} berbasis MAVSDK yang memampukan wahana untuk menavigasi, mendokumentasi korban, dan menghindari pelacakan target duplikat secara mandiri.
+	\item Meningkatkan integrasi dan keandalan platform monitoring CCTV berbasis ESP32-CAM (MIOTVision) pada antarmuka website dan aplikasi mobile secara real-time.
+	\item Mengoptimalkan stabilitas komunikasi data menggunakan MQTT over WSS dan Laravel Reverb, serta meningkatkan efisiensi penyimpanan terpusat melalui penerapan kebijakan retensi data pada MySQL dan pembersihan objek MinIO.
+	\item Mengimplementasikan fitur deteksi penyusup, deteksi gerakan, monitoring telemetri perangkat secara real-time, pembaruan firmware OTA, serta pengelolaan infrastruktur server berbasis Cloudflared Tunnel dan Webmin untuk meningkatkan keamanan serta kemudahan pemeliharaan.
 \end{enumerate}
 
 \section{Batasan Masalah}
 Agar ruang lingkup penelitian tetap terarah dan terukur, ditetapkan batasan masalah sebagai berikut:
 \begin{enumerate}
-	\item Sistem monitoring menggunakan perangkat ESP32-CAM yang terhubung ke server melalui jaringan internet menggunakan protokol MQTT.
+	\item Sistem dikembangkan dengan memperluas platform MIOTVision menggunakan perangkat ESP32-CAM yang terhubung ke server melalui protokol MQTT over WSS.
 	
-	\item Sistem terdiri dari website monitoring real-time berbasis WebSocket dan aplikasi mobile yang digunakan untuk pemantauan serta penerimaan notifikasi.
+	\item Pembaruan real-time pada website diimplementasikan menggunakan Laravel Reverb dan pada aplikasi mobile berbasis Flutter menggunakan notifikasi real-time.
 	
-	\item Penyimpanan data menggunakan MySQL untuk metadata dan MinIO Object Storage untuk penyimpanan citra hasil tangkapan kamera.
+	\item Penyimpanan data menggunakan MySQL yang dilengkapi mekanisme retensi data untuk metadata, dan MinIO Object Storage yang dilengkapi sistem pembersihan otomatis untuk penyimpanan citra.
 	
-	\item Fitur yang dikembangkan meliputi motion detection, monitoring telemetri perangkat (RSSI, uptime, free heap, dan status perangkat), serta pengiriman notifikasi kepada pengguna.
+	\item Fitur-fitur yang diimplementasikan meliputi deteksi gerakan (motion detection), deteksi penyusup (intruder detection), monitoring telemetri perangkat (RSSI, uptime, free heap, reset reason, capture/publish success rate), dan dukungan pembaruan firmware OTA.
 	
-	\item Infrastruktur sistem dijalankan pada server Intel NUC berbasis Debian 12 dengan dukungan Docker, Cloudflared Tunnel, dan Webmin untuk pengelolaan layanan.
+	\item Infrastruktur sistem dijalankan pada server Intel NUC berbasis Debian 12 menggunakan Docker Container, dengan integrasi Cloudflared Tunnel untuk akses publik aman serta Webmin untuk pengelolaan administrasi server.
 \end{enumerate}
 
 \section{Manfaat Penelitian}
@@ -51,4 +51,15 @@ Penelitian ini diharapkan dapat memberikan kontribusi dan manfaat sebagai beriku
 	\item Bagi pengguna dan pengelola sistem, penelitian ini menghasilkan platform monitoring CCTV berbasis IoT yang memungkinkan pemantauan kondisi kamera, penerimaan notifikasi aktivitas secara real-time, serta pengelolaan perangkat dan layanan melalui website maupun aplikasi mobile.
 	
 	\item Bagi pengembangan teknologi, penelitian ini dapat menjadi referensi dalam pengembangan sistem monitoring berbasis IoT yang memanfaatkan ESP32-CAM, MQTT, WebSocket, motion detection, dan infrastruktur server terpusat untuk mendukung implementasi sistem pengawasan yang lebih efektif dan mudah dikembangkan di masa mendatang.
+\end{enumerate}
+
+\section{Kontribusi Penelitian}
+Penelitian ini memberikan beberapa kontribusi penting dalam memperluas (extends) dan meningkatkan (enhances) platform monitoring CCTV MIOTVision yang telah dirintis pada studi terdahulu. Kontribusi utama dari penelitian ini didefinisikan sebagai berikut:
+\begin{enumerate}
+	\item Mengimplementasikan fitur deteksi gerakan (motion detection) dan mengintegrasikan fitur deteksi penyusup (intruder detection) pada sistem pengawasan berbasis kamera ESP32-CAM.
+	\item Mengembangkan sistem pemantauan telemetri perangkat secara real-time dan mekanisme notifikasi real-time ke aplikasi mobile.
+	\item Meningkatkan stabilitas komunikasi data melalui optimalisasi protokol MQTT over WSS dan integrasi Laravel Reverb untuk komunikasi real-time pada web platform.
+	\item Menyediakan dukungan pembaruan firmware secara nirkabel (OTA support) untuk mempermudah pemeliharaan perangkat kamera secara jarak jauh.
+	\item Meningkatkan efisiensi infrastruktur server melalui penerapan kebijakan retensi data pada MySQL, mekanisme pembersihan otomatis objek pada MinIO (MinIO cleanup), serta integrasi Webmin untuk kemudahan administrasi server.
+	\item Mengoptimalkan deployment sistem melalui penerapan Cloudflared Tunnel untuk akses publik yang aman serta deployment layanan deteksi secara terisolasi pada server Intel NUC.
 \end{enumerate}

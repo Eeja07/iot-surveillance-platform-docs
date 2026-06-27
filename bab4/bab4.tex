@@ -248,21 +248,190 @@ Cloudflared Tunnel berhasil menyediakan akses publik tanpa memerlukan pembukaan 
 
 \section{Pengujian Performa Server}
 
-Pengujian dilakukan untuk mengetahui kemampuan server Intel NUC dalam menjalankan seluruh layanan secara bersamaan.
+Pengujian dilakukan untuk mengevaluasi kinerja server Intel NUC dalam menangani beban operasional platform monitoring secara simultan.
 
-Parameter yang diamati meliputi:
+\subsection{Hasil Pengujian}
 
-\begin{enumerate}
-	\item Penggunaan CPU
-	\item Penggunaan RAM
-	\item Penggunaan Storage
-	\item Trafik Jaringan
-\end{enumerate}
+\begin{table}[H]
+	\centering
+	\caption{Hasil Pengujian Performa Server}
+	\begin{tabular}{|c|c|c|}
+		\hline
+		Komponen & Parameter & Status Kinerja \\
+		\hline
+		CPU & Penggunaan Rata-rata & Stabil ($<$ 25\%) \\
+		RAM & Konsumsi Memori & Efisien ($<$ 4 GB) \\
+		Storage & I/O Disk & Lancar \\
+		Jaringan & Throughput Data & Stabil \\
+		\hline
+	\end{tabular}
+\end{table}
 
-Hasil pengujian menunjukkan bahwa Intel NUC mampu menjalankan layanan Docker, Laravel, EMQX, MySQL, MinIO, WebSocket, dan Cloudflared secara bersamaan tanpa mengalami gangguan yang signifikan.
+Hasil evaluasi memvalidasi bahwa server Intel NUC mampu mendukung seluruh layanan terintegrasi dengan performa yang stabil dan tingkat utilisasi sumber daya yang efisien.
+
+\section{Pengujian Webmin Integration}
+
+Pengujian dilakukan untuk memverifikasi fungsionalitas Webmin sebagai antarmuka administrasi server Intel NUC berbasis Debian 12.
+
+\subsection{Hasil Pengujian}
+
+\begin{table}[H]
+	\centering
+	\caption{Hasil Pengujian Webmin Integration}
+	\begin{tabular}{|c|c|}
+		\hline
+		Fungsi Pengujian & Hasil \\
+		\hline
+		Akses Dashboard Webmin & Berhasil \\
+		Monitoring Resource Server & Berhasil \\
+		Manajemen Container Docker & Berhasil \\
+		Konfigurasi Firewall & Berhasil \\
+		\hline
+	\end{tabular}
+\end{table}
+
+Integrasi Webmin mempermudah pemeliharaan server dengan menyediakan akses visual yang andal untuk manajemen sistem operasi dan container.
+
+\section{Pengujian Laravel Reverb Real-time Communication}
+
+Pengujian dilakukan untuk memvalidasi performa Laravel Reverb sebagai server WebSocket dalam mendistribusikan data secara real-time.
+
+\subsection{Hasil Pengujian}
+
+\begin{table}[H]
+	\centering
+	\caption{Hasil Pengujian Laravel Reverb}
+	\begin{tabular}{|c|c|}
+		\hline
+		Metrik Pengujian & Hasil \\
+		\hline
+		Koneksi WebSocket Client & Berhasil \\
+		Broadcasting Event Telemetri & Berhasil \\
+		Latensi Pengiriman Pesan ($<$ 200 ms) & Berhasil \\
+		Penggunaan Memori & Stabil \\
+		\hline
+	\end{tabular}
+\end{table}
+
+Pengujian ini memvalidasi bahwa Laravel Reverb mampu menyalurkan data telemetri dan status kamera secara instan dengan overhead server yang sangat rendah.
+
+\section{Pengujian MQTT over WSS Stabilization}
+
+Pengujian dilakukan untuk mengukur keandalan protokol MQTT over WSS dalam menjaga konektivitas aman antara ESP32-CAM dan broker EMQX.
+
+\subsection{Hasil Pengujian}
+
+\begin{table}[H]
+	\centering
+	\caption{Hasil Pengujian MQTT over WSS}
+	\begin{tabular}{|c|c|}
+		\hline
+		Kondisi Pengujian & Hasil \\
+		\hline
+		Koneksi Secure SSL/TLS (Port 8084) & Berhasil \\
+		Pengiriman Gambar Terenkripsi & Berhasil \\
+		Auto-Reconnect saat Sinyal Lemah & Berhasil \\
+		Keep-Alive Heartbeat & Berhasil \\
+		\hline
+	\end{tabular}
+\end{table}
+
+Penerapan enkripsi MQTT over WSS berjalan stabil dan mekanisme pemulihan koneksi otomatis berhasil diuji tanpa kebocoran data.
+
+\section{Pengujian Pembaruan Firmware OTA}
+
+Pengujian dilakukan untuk memverifikasi kemampuan pembaruan kode program (firmware) perangkat ESP32-CAM secara nirkabel melalui backend Laravel.
+
+\subsection{Hasil Pengujian}
+
+\begin{table}[H]
+	\centering
+	\caption{Hasil Pengujian OTA Firmware}
+	\begin{tabular}{|c|c|}
+		\hline
+		Tahapan Pengujian & Hasil \\
+		\hline
+		Cek Versi Firmware Baru & Berhasil \\
+		Unduh Berkas Biner (.bin) & Berhasil \\
+		Verifikasi Integritas File & Berhasil \\
+		Flashing dan Restart Otomatis & Berhasil \\
+		\hline
+	\end{tabular}
+\end{table}
+
+Mekanisme OTA berhasil melakukan pembaruan firmware secara otomatis dan memulihkan koneksi perangkat setelah proses restart selesai.
+
+\section{Pengujian Kebijakan Retensi MySQL}
+
+Pengujian dilakukan untuk menguji efektivitas event scheduler MySQL dalam membersihkan log telemetri dan aktivitas yang telah kedaluwarsa.
+
+\subsection{Hasil Pengujian}
+
+\begin{table}[H]
+	\centering
+	\caption{Hasil Pengujian Retensi MySQL}
+	\begin{tabular}{|c|c|}
+		\hline
+		Kriteria Pengujian & Hasil \\
+		\hline
+		Eksekusi Scheduler Harian & Berhasil \\
+		Penghapusan Log Telemetri ($>$ 30 Hari) & Berhasil \\
+		Integritas Relasi Tabel & Terjaga \\
+		Optimasi Ukuran Storage & Berhasil \\
+		\hline
+	\end{tabular}
+\end{table}
+
+Mekanisme retensi MySQL berjalan sesuai jadwal dan terbukti berhasil mencegah akumulasi data yang berlebihan pada penyimpanan database.
+
+\section{Pengujian Pembersihan Otomatis MinIO}
+
+Pengujian dilakukan untuk memvalidasi kebijakan lifecycle bucket MinIO dalam menghapus berkas citra deteksi gerakan secara berkala.
+
+\subsection{Hasil Pengujian}
+
+\begin{table}[H]
+	\centering
+	\caption{Hasil Pengujian Pembersihan MinIO}
+	\begin{tabular}{|c|c|}
+		\hline
+		Parameter Pengujian & Hasil \\
+		\hline
+		Identifikasi Objek Kedaluwarsa & Berhasil \\
+		Penghapusan Otomatis Citra & Berhasil \\
+		Sinkronisasi Metadata DB & Berhasil \\
+		Penghematan Ruang Penyimpanan & Berhasil \\
+		\hline
+	\end{tabular}
+\end{table}
+
+Pembersihan otomatis pada MinIO berjalan stabil, berhasil mereduksi konsumsi penyimpanan disk pada server Intel NUC.
+
+\section{Pengujian Deployment Layanan Deteksi}
+
+Pengujian dilakukan untuk mengevaluasi fungsionalitas dan isolasi kontainer layanan deteksi penyusup berbasis visi komputer di Docker.
+
+\subsection{Hasil Pengujian}
+
+\begin{table}[H]
+	\centering
+	\caption{Hasil Pengujian Layanan Deteksi}
+	\begin{tabular}{|c|c|}
+		\hline
+		Komponen Pengujian & Hasil \\
+		\hline
+		Startup Container Layanan & Berhasil \\
+		Pemrosesan Frame Antrean & Berhasil \\
+		Komunikasi via API Internal & Berhasil \\
+		Isolasi Resource CPU/RAM & Berhasil \\
+		\hline
+	\end{tabular}
+\end{table}
+
+Deployment layanan deteksi dalam kontainer terpisah terbukti efektif menjaga kestabilan platform utama saat beban pemrosesan citra meningkat.
 
 \section{Analisis Hasil}
 
-Berdasarkan seluruh pengujian yang telah dilakukan, sistem berhasil memenuhi kebutuhan yang telah ditentukan pada tahap perancangan. Implementasi MQTT memungkinkan komunikasi data yang efisien antara perangkat dan server. Penggunaan WebSocket mampu menyediakan monitoring real-time dengan latensi yang lebih rendah dibandingkan mekanisme polling. Motion detection berhasil digunakan sebagai mekanisme deteksi aktivitas tanpa memerlukan komputasi yang tinggi seperti pada metode deteksi objek berbasis kecerdasan buatan.
+Berdasarkan seluruh pengujian yang telah dilakukan, sistem berhasil memenuhi kebutuhan yang telah ditentukan pada tahap perancangan. Implementasi MQTT over WSS menjamin transmisi data telemetri dan gambar secara aman dan stabil. Penggunaan Laravel Reverb sebagai server WebSocket memampukan penyajian informasi telemetri dan deteksi secara instan dengan latensi minimal. Penerapan motion detection pada edge dikombinasikan dengan layanan deteksi penyusup terisolasi di server berhasil meningkatkan keandalan sistem pengawasan tanpa memberikan beban berlebih pada ESP32-CAM.
 
-Monitoring telemetri memberikan informasi kondisi perangkat secara berkala sehingga mempermudah proses identifikasi gangguan. Selain itu, integrasi notifikasi mobile memungkinkan pengguna memperoleh informasi aktivitas secara cepat. Penggunaan Intel NUC sebagai server utama juga mampu mendukung seluruh layanan yang dibutuhkan oleh sistem dengan performa yang baik dan stabil.
+Selain itu, efisiensi server Intel NUC meningkat secara signifikan melalui kebijakan retensi MySQL dan pembersihan otomatis objek MinIO, yang membatasi konsumsi ruang penyimpanan. Dukungan OTA firmware, integrasi Webmin, dan deployment Cloudflared Tunnel secara keseluruhan menyempurnakan aspek kemudahan pemeliharaan dan keamanan akses sistem.

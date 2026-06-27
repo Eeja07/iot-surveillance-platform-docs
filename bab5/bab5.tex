@@ -7,11 +7,11 @@ Berdasarkan hasil perancangan, implementasi, dan pengujian yang telah dilakukan,
 
 \begin{enumerate}
 	
-	\item Platform monitoring CCTV berbasis ESP32-CAM berhasil dirancang dan diimplementasikan sehingga dapat digunakan untuk melakukan pemantauan perangkat melalui website dan aplikasi mobile secara real-time. Sistem mampu menampilkan informasi kamera, data citra, status perangkat, serta aktivitas yang terdeteksi pada area pengawasan.
+	\item Pengembangan lanjutan dan peningkatan fungsionalitas platform monitoring CCTV berbasis ESP32-CAM (MIOTVision) berhasil ditingkatkan sehingga terintegrasi secara stabil dengan antarmuka website dan aplikasi mobile. Sistem mampu menampilkan informasi kamera, data citra, telemetri, status perangkat, serta aktivitas penyusupan secara real-time.
 	
-	\item Sistem komunikasi dan penyimpanan data berhasil diimplementasikan menggunakan MQTT, WebSocket, MySQL, dan MinIO yang dijalankan pada server Intel NUC. Penggunaan MQTT memungkinkan proses komunikasi data antara perangkat dan server berjalan dengan baik, sedangkan WebSocket mampu menyediakan pembaruan data secara real-time tanpa mekanisme polling sehingga meningkatkan efisiensi komunikasi dan pengalaman pengguna.
+	\item Sistem komunikasi dan penyimpanan data berhasil ditingkatkan dengan stabilisasi MQTT over WSS, integrasi Laravel Reverb, penerapan kebijakan retensi data pada MySQL, dan pembersihan otomatis objek pada MinIO yang dijalankan pada server Intel NUC. Peningkatan ini berhasil meminimalkan latensi pembaruan data tanpa ketergantungan pada HTTP Polling serta meningkatkan efisiensi penyimpanan server.
 	
-	\item Fitur motion detection, monitoring telemetri perangkat, dan notifikasi mobile berhasil diimplementasikan pada sistem. Motion detection mampu mendeteksi aktivitas pada area pengawasan dan menghasilkan event yang digunakan untuk penyimpanan data serta pengiriman notifikasi. Selain itu, monitoring telemetri memungkinkan pengawasan kondisi perangkat melalui parameter RSSI, uptime, free heap, reset reason, capture success rate, dan publish success rate sehingga mempermudah proses pemeliharaan dan identifikasi gangguan perangkat.
+	\item Fitur deteksi gerakan (motion detection), deteksi penyusup (intruder detection), monitoring telemetri perangkat komprehensif, pembaruan firmware OTA, dan pengiriman notifikasi mobile berhasil diintegrasikan pada sistem. Fitur deteksi gerakan mampu mendeteksi pergerakan pada area pengawasan untuk memicu penyimpanan citra dan push notification secara real-time, sedangkan data telemetri mempermudah pemeliharaan operasional perangkat secara berkala.
 	
 \end{enumerate}
 
