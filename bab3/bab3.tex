@@ -116,33 +116,89 @@ Layanan yang dijalankan meliputi:
 	\item WebSocket Service
 \end{enumerate}
 
+\begin{figure}[H]
+\centering
+[PLACEHOLDER_IMAGE]
+\caption{Skema Infrastruktur Kontainer Server}
+\label{fig:docker_deployment}
+\end{figure}
+
 \subsection{Implementasi Cloudflared Tunnel}
 
 Cloudflared Tunnel digunakan untuk menyediakan akses publik terhadap website dan API tanpa membuka port secara langsung pada router. Konfigurasi dilakukan dengan menghubungkan server ke layanan Cloudflare Tunnel sehingga domain dapat diakses secara aman melalui internet.
+
+\begin{figure}[H]
+\centering
+[PLACEHOLDER_IMAGE]
+\caption{Diagram Alur Akses Aman Cloudflared Tunnel}
+\label{fig:cloudflared_tunnel}
+\end{figure}
 
 \subsection{Implementasi Webmin}
 
 Webmin digunakan untuk membantu proses administrasi server melalui antarmuka berbasis web. Fitur ini digunakan untuk melakukan pemantauan kondisi server, pengelolaan layanan, serta konfigurasi sistem operasi.
 
+\begin{figure}[H]
+\centering
+[PLACEHOLDER_IMAGE]
+\caption{Dashboard Administrasi Webmin}
+\label{fig:webmin_dashboard}
+\end{figure}
+
 \subsection{Implementasi Website Monitoring}
 
 Website monitoring dikembangkan menggunakan framework frontend yang terhubung dengan backend melalui WebSocket. Website mampu menampilkan informasi perangkat, status kamera, data telemetri, gambar hasil tangkapan kamera, serta notifikasi aktivitas secara real-time.
+
+\begin{figure}[H]
+\centering
+[PLACEHOLDER_IMAGE]
+\caption{Halaman Dashboard Website MIOTVision}
+\label{fig:website_monitoring}
+\end{figure}
 
 \subsection{Implementasi Aplikasi Mobile}
 
 Aplikasi mobile berbasis Flutter yang telah dirintis sebelumnya ditingkatkan fungsionalitasnya untuk mendukung penerimaan push notification secara real-time, monitoring telemetri perangkat secara visual, serta integrasi status operasional CCTV.
 
+\begin{figure}[H]
+\centering
+[PLACEHOLDER_IMAGE]
+\caption{Antarmuka Aplikasi Mobile Flutter}
+\label{fig:flutter_app}
+\end{figure}
+
 \subsection{Implementasi Deteksi Gerakan dan Deteksi Penyusup}
 
 Deteksi gerakan (motion detection) diimplementasikan di dalam layanan deteksi (detection service) terpisah pada server Intel NUC dengan membandingkan perbedaan nilai intensitas piksel antar frame citra hasil akuisisi ESP32-CAM yang diterima secara berurutan. Setelah gerakan terdeteksi, citra tersebut diproses lebih lanjut oleh modul deteksi penyusup (intruder detection) untuk mengidentifikasi adanya objek manusia secara real-time.
+
+\begin{figure}[H]
+\centering
+[PLACEHOLDER_IMAGE]
+\caption{Diagram Alur Deteksi Asinkron Detection Service}
+\label{fig:detection_service}
+\end{figure}
 
 \subsection{Implementasi Pemantauan Telemetri}
 
 Pemantauan telemetri perangkat dilakukan secara periodik dengan mengirimkan data operasional ESP32-CAM ke server melalui protokol MQTT. Data yang dikirimkan meliputi parameter Received Signal Strength Indicator (RSSI), uptime perangkat, free heap memory, reset reason, serta tingkat keberhasilan pengambilan gambar dan publikasi data.
 
+\begin{figure}[H]
+\centering
+[PLACEHOLDER_IMAGE]
+\caption{Visualisasi Widget Telemetri Perangkat}
+\label{fig:telemetry_widget}
+\end{figure}
+
 \subsection{Implementasi Notifikasi Real-time}
 
 Notifikasi real-time diimplementasikan menggunakan layanan push notification untuk mengirimkan peringatan keamanan instan ke perangkat mobile pengguna segera setelah terdeteksi adanya penyusupan atau gerakan mencurigakan pada area pengawasan.
+
+\begin{figure}[H]
+\centering
+[PLACEHOLDER_IMAGE]
+\caption{Penerimaan Push Notification pada Handphone}
+\label{fig:push_notification}
+\end{figure}
 
 \subsection{Integrasi Laravel Reverb}
 
@@ -150,15 +206,22 @@ Laravel Reverb diintegrasikan pada backend untuk menangani komunikasi WebSocket 
 
 \subsection{Stabilisasi MQTT over WSS}
 
-Stabilisasi komunikasi MQTT over WebSocket Secure (WSS) dilakukan untuk menjamin transmisi data yang aman dan andal antara perangkat ESP32-CAM dan broker EMQX melalui port web standar dengan dukungan mekanisme auto-reconnect.
+Stabilisasi komunikasi MQTT over WebSocket Secure (WSS) dilakukan untuk menjamin transmisi data yang aman dan andal antara perangkat ESP32-CAM and broker EMQX melalui port web standar dengan dukungan mekanisme auto-reconnect.
 
 \subsection{Implementasi Pembaruan Firmware OTA}
 
 Dukungan pembaruan firmware secara nirkabel (Over-the-Air/OTA) diimplementasikan agar perangkat ESP32-CAM dapat mengunduh berkas biner firmware baru secara asinkron dari server backend Laravel dan melakukan pembaruan kode program secara otomatis.
 
+\begin{figure}[H]
+\centering
+[PLACEHOLDER_IMAGE]
+\caption{Halaman Manajemen Firmware OTA pada Backend}
+\label{fig:ota_management}
+\end{figure}
+
 \subsection{Implementasi Kebijakan Retensi MySQL}
 
-Mekanisme retensi basis data MySQL diimplementasikan dengan membuat prosedur terjadwal (event scheduler) untuk membersihkan data log telemetri dan riwayat deteksi yang telah melewati batas waktu penyimpanan tertentu agar ukuran basis data tetap optimal.
+Mekaniseme retensi basis data MySQL diimplementasikan dengan membuat prosedur terjadwal (event scheduler) untuk membersihkan data log telemetri dan riwayat deteksi yang telah melewati batas waktu penyimpanan tertentu agar ukuran basis data tetap optimal.
 
 \subsection{Implementasi Pembersihan Otomatis MinIO}
 

@@ -11,7 +11,7 @@ Berdasarkan hasil perancangan, implementasi, dan pengujian yang telah dilakukan,
 	
 	\item Sistem komunikasi dan penyimpanan data berhasil ditingkatkan dengan stabilisasi MQTT over WSS, integrasi Laravel Reverb, penerapan kebijakan retensi data pada MySQL, dan pembersihan otomatis objek pada MinIO yang dijalankan pada server Intel NUC. Peningkatan ini berhasil meminimalkan latensi pembaruan data tanpa ketergantungan pada HTTP Polling serta meningkatkan efisiensi penyimpanan server.
 	
-	\item Fitur deteksi gerakan (motion detection), deteksi penyusup (intruder detection), monitoring telemetri perangkat komprehensif, pembaruan firmware OTA, dan pengiriman notifikasi mobile berhasil diintegrasikan pada sistem. Fitur deteksi gerakan mampu mendeteksi pergerakan pada area pengawasan untuk memicu penyimpanan citra dan push notification secara real-time, sedangkan data telemetri mempermudah pemeliharaan operasional perangkat secara berkala.
+	\item Fitur deteksi gerakan (motion detection) dan deteksi penyusup (intruder detection) pada layanan deteksi terpusat di server, monitoring telemetri perangkat komprehensif, pembaruan firmware OTA, serta pengiriman notifikasi mobile berhasil diintegrasikan pada sistem. Alur deteksi bertingkat pada server mampu menganalisis pergerakan dan mendeteksi penyusup pada area pengawasan untuk memicu penyimpanan citra serta pengiriman push notification secara real-time, sedangkan data telemetri operasional dikumpulkan secara berkala oleh ESP32-CAM.
 	
 \end{enumerate}
 
