@@ -7,11 +7,15 @@ Berdasarkan hasil perancangan, implementasi, dan pengujian yang telah dilakukan,
 
 \begin{enumerate}
 	
-	\item Pengembangan lanjutan dan peningkatan fungsionalitas platform monitoring CCTV berbasis ESP32-CAM (MIOTVision) berhasil ditingkatkan sehingga terintegrasi secara stabil dengan antarmuka website dan aplikasi mobile. Sistem mampu menampilkan informasi kamera, data citra, telemetri, status perangkat, serta aktivitas penyusupan secara real-time.
+	\item Pengembangan lanjutan dan peningkatan platform monitoring CCTV berbasis ESP32-CAM (MIOTVision) berhasil ditingkatkan sehingga terintegrasi secara stabil dengan antarmuka website dan aplikasi mobile. Sistem mampu menampilkan informasi kamera, data citra, telemetri, status konfigurasi, serta aktivitas penyusupan secara real-time.
 	
-	\item Sistem komunikasi dan penyimpanan data berhasil ditingkatkan dengan stabilisasi MQTT over WSS, integrasi Laravel Reverb, penerapan kebijakan retensi data pada MySQL, dan pembersihan otomatis objek pada MinIO yang dijalankan pada server Intel NUC. Peningkatan ini berhasil meminimalkan latensi pembaruan data tanpa ketergantungan pada HTTP Polling serta meningkatkan efisiensi penyimpanan server.
+	\item Sistem komunikasi dan penyimpanan data berhasil ditingkatkan dengan stabilisasi MQTT over WSS, integrasi Laravel Reverb WebSocket, penerapan kebijakan retensi data pada MySQL, dan pembersihan otomatis objek pada MinIO melalui Laravel Scheduler (\texttt{cleanup-image-records}) pada server Intel NUC. Peningkatan ini meminimalkan latensi pembaruan data tanpa ketergantungan pada HTTP Polling serta meningkatkan efisiensi penyimpanan server secara signifikan.
 	
-	\item Fitur deteksi gerakan (motion detection) dan deteksi penyusup (intruder detection) pada layanan deteksi terpusat di server, monitoring telemetri perangkat komprehensif, pembaruan firmware OTA, serta pengiriman notifikasi mobile berhasil diintegrasikan pada sistem. Alur deteksi bertingkat pada server mampu menganalisis pergerakan dan mendeteksi penyusup pada area pengawasan untuk memicu penyimpanan citra serta pengiriman push notification secara real-time, sedangkan data telemetri operasional dikumpulkan secara berkala oleh ESP32-CAM.
+	\item Fitur deteksi gerakan (\texttt{BackgroundSubtractorMOG2} dengan parameter \texttt{history=500}, \texttt{varThreshold=16}, \texttt{detectShadows=False}) dan deteksi penyusup (\texttt{YOLO11n} dengan filter kelas manusia \texttt{class\_id == 0}) pada FastAPI Detection Service terisolasi berhasil dijalankan secara asinkron menggunakan \texttt{BackgroundTasks} di server untuk menghasilkan \texttt{motion\_events} dan \texttt{detection\_events}.
+	
+	\item Mekanisme sinkronisasi konfigurasi kamera dua arah asinkron menggunakan pembandingan \texttt{desired\_config\_hash} dan \texttt{current\_config\_hash} via MQTT topik \texttt{ws/camera/\{uuid\}/config} terbukti berhasil menyelaraskan perubahan parameter operasional dari web panel ke ESP32-CAM secara akurat.
+	
+	\item Mekanisme pembaruan firmware secara nirkabel (OTA) berbasis tabel \texttt{ota\_firmwares} dan \texttt{ota\_deployments} yang disebarkan asinkron melalui topik MQTT \texttt{ws/camera/\{uuid\}/ota} berhasil memicu proses pengunduhan biner dan reboot perangkat secara otomatis.
 	
 \end{enumerate}
 
@@ -29,7 +33,7 @@ Berdasarkan hasil penelitian yang telah dilakukan, terdapat beberapa saran yang 
 	
 	\item Mengembangkan dashboard monitoring yang lebih interaktif dengan menambahkan visualisasi statistik penggunaan perangkat, kondisi jaringan, dan histori aktivitas kamera.
 	
-	\item Menambahkan mekanisme manajemen pengguna yang lebih lengkap, seperti pembagian hak akses berdasarkan peran pengguna dan pengelolaan beberapa lokasi pengawasan dalam satu sistem.
+	\item Mengembangkan visualisasi peta interaktif multi-lokasi kamera pengawasan terpadu untuk memudahkan navigasi geografis perangkat dalam skala besar.
 	
 \end{enumerate}
 
