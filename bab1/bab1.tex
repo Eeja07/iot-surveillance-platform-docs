@@ -10,16 +10,16 @@ Perkembangan teknologi Internet of Things (IoT) memungkinkan berbagai perangkat 
 
 ESP32-CAM merupakan salah satu perangkat yang banyak dimanfaatkan dalam pengembangan sistem monitoring karena memiliki modul kamera dan konektivitas Wi-Fi dalam satu perangkat dengan biaya yang relatif rendah. Namun, sistem monitoring berbasis kamera memerlukan infrastruktur yang mampu mengelola pengiriman data, penyimpanan gambar, pemantauan kondisi perangkat, serta penyajian informasi kepada pengguna secara real-time.
 
-Pada penelitian ini, dilakukan pengembangan lanjutan dan peningkatan fungsionalitas platform monitoring CCTV berbasis ESP32-CAM (MIOTVision) yang terintegrasi dengan website dan aplikasi mobile. Penelitian ini memperluas sistem yang telah dirintis sebelumnya dengan menstabilkan protokol MQTT over WSS serta mengintegrasikan Laravel Reverb untuk mendukung komunikasi real-time. Data hasil tangkapan kamera disimpan pada object storage MinIO yang dilengkapi dengan mekanisme pembersihan otomatis (object cleanup), sedangkan metadata perangkat dan aktivitas sistem dikelola melalui basis data terpusat MySQL dengan mekanisme retensi data.
+Pada penelitian ini, dilakukan pengembangan lanjutan dan peningkatan fungsionalitas platform monitoring CCTV berbasis ESP32-CAM (MIOTVision) yang terintegrasi dengan website dan aplikasi mobile. Penelitian ini memperluas sistem yang telah dirintis sebelumnya dengan menstabilkan protokol MQTT over WSS serta mengintegrasikan Laravel Reverb untuk mendukung komunikasi real-time. Data hasil tangkapan kamera disimpan pada object storage MinIO yang dilengkapi dengan mekanisme pembersihan otomatis (object cleanup) berbasis Laravel Scheduler, sedangkan metadata perangkat dan aktivitas sistem dikelola melalui basis data terpusat MySQL dengan mekanisme retensi data.
 
-Selain itu, sistem ditingkatkan dengan mengimplementasikan fitur deteksi penyusup (intruder detection), deteksi gerakan (motion detection) untuk mengidentifikasi pergerakan pada area pengawasan, monitoring telemetri perangkat secara komprehensif, dukungan pembaruan firmware secara nirkabel (OTA), serta notifikasi mobile secara real-time. Seluruh layanan dijalankan pada server Intel NUC menggunakan Docker untuk meningkatkan kemudahan pemeliharaan sistem, dideploy menggunakan Cloudflared Tunnel untuk akses publik yang aman, serta dikelola melalui Webmin untuk memudahkan proses administrasi server.
+Selain itu, sistem ditingkatkan dengan mengimplementasikan deteksi gerakan (motion detection) secara lokal pada perangkat keras ESP32-CAM (sisi edge), integrasi deteksi penyusup (intruder detection) pada server untuk menganalisis objek manusia, monitoring telemetri perangkat secara komprehensif, dukungan pembaruan firmware secara nirkabel (OTA), serta notifikasi mobile secara real-time. Seluruh layanan dijalankan pada server Intel NUC menggunakan Docker untuk meningkatkan kemudahan pemeliharaan sistem, dideploy menggunakan Cloudflared Tunnel untuk akses publik yang aman, serta dikelola melalui Webmin untuk memudahkan proses administrasi server.
 
 \section{Rumusan Masalah}
 Berdasarkan uraian latar belakang di atas, rumusan masalah dalam penelitian ini didefinisikan secara lebih spesifik sebagai berikut:
 \begin{enumerate}
 	\item Bagaimana memperluas dan meningkatkan fungsionalitas platform monitoring CCTV berbasis ESP32-CAM (MIOTVision) agar terintegrasi secara stabil dan real-time dengan website serta aplikasi mobile?
-	\item Bagaimana mengoptimalkan komunikasi data berbasis MQTT over WSS dan Laravel Reverb serta mengelola penyimpanan terpusat menggunakan mekanisme retensi data MySQL dan pembersihan otomatis objek MinIO?
-	\item Bagaimana mengimplementasikan fitur deteksi gerakan (motion detection), deteksi penyusup (intruder detection), notifikasi mobile real-time, monitoring telemetri perangkat, serta dukungan OTA firmware untuk keandalan dan kemudahan pemeliharaan sistem?
+	\item Bagaimana mengoptimalkan komunikasi data berbasis MQTT over WSS dan Laravel Reverb serta mengelola penyimpanan terpusat menggunakan mekanisme retensi data MySQL dan pembersihan objek MinIO berbasis Laravel Scheduler?
+	\item Bagaimana mengimplementasikan fitur deteksi gerakan (motion detection) pada perangkat edge, deteksi penyusup (intruder detection) pada server, notifikasi mobile real-time, monitoring telemetri perangkat, serta dukungan OTA firmware untuk keandalan dan kemudahan pemeliharaan sistem?
 \end{enumerate}
 
 \section{Tujuan Penelitian}
@@ -37,9 +37,9 @@ Agar ruang lingkup penelitian tetap terarah dan terukur, ditetapkan batasan masa
 	
 	\item Pembaruan real-time pada website diimplementasikan menggunakan Laravel Reverb dan pada aplikasi mobile berbasis Flutter menggunakan notifikasi real-time.
 	
-	\item Penyimpanan data menggunakan MySQL yang dilengkapi mekanisme retensi data untuk metadata, dan MinIO Object Storage yang dilengkapi sistem pembersihan otomatis untuk penyimpanan citra.
+	\item Penyimpanan data menggunakan MySQL yang dilengkapi mekanisme retensi data untuk metadata, dan MinIO Object Storage yang dilengkapi sistem pembersihan otomatis berbasis Laravel Scheduler untuk penyimpanan citra.
 	
-	\item Fitur-fitur yang diimplementasikan meliputi deteksi gerakan (motion detection), deteksi penyusup (intruder detection), monitoring telemetri perangkat (RSSI, uptime, free heap, reset reason, capture/publish success rate), dan dukungan pembaruan firmware OTA.
+	\item Fitur-fitur yang diimplementasikan meliputi deteksi gerakan (motion detection) secara lokal pada perangkat keras ESP32-CAM (sisi edge), deteksi penyusup (intruder detection) pada server, monitoring telemetri perangkat (RSSI, uptime, free heap, reset reason, capture/publish success rate), dan dukungan pembaruan firmware OTA.
 	
 	\item Infrastruktur sistem dijalankan pada server Intel NUC berbasis Debian 12 menggunakan Docker Container, dengan integrasi Cloudflared Tunnel untuk akses publik aman serta Webmin untuk pengelolaan administrasi server.
 \end{enumerate}

@@ -221,6 +221,10 @@ Pengujian dilakukan untuk memastikan data kondisi perangkat dapat diterima dan d
 	\end{tabular}
 \end{table}
 
+\begin{center}
+	[Grafik telemetri]
+\end{center}
+
 Data telemetri berhasil ditampilkan secara real-time sehingga memudahkan proses monitoring dan diagnosis perangkat.
 
 \section{Pengujian Cloudflared Tunnel}
@@ -252,20 +256,17 @@ Pengujian dilakukan untuk mengevaluasi kinerja server Intel NUC dalam menangani 
 
 \subsection{Hasil Pengujian}
 
-\begin{table}[H]
-	\centering
-	\caption{Hasil Pengujian Performa Server}
-	\begin{tabular}{|c|c|c|}
-		\hline
-		Komponen & Parameter & Status Kinerja \\
-		\hline
-		CPU & Penggunaan Rata-rata & Stabil ($<$ 25\%) \\
-		RAM & Konsumsi Memori & Efisien ($<$ 4 GB) \\
-		Storage & I/O Disk & Lancar \\
-		Jaringan & Throughput Data & Stabil \\
-		\hline
-	\end{tabular}
-\end{table}
+\begin{center}
+	[Tabel hasil pengujian]
+\end{center}
+
+\begin{center}
+	[Grafik penggunaan CPU]
+\end{center}
+
+\begin{center}
+	[Grafik penyimpanan]
+\end{center}
 
 Hasil evaluasi memvalidasi bahwa server Intel NUC mampu mendukung seluruh layanan terintegrasi dengan performa yang stabil dan tingkat utilisasi sumber daya yang efisien.
 
@@ -275,20 +276,9 @@ Pengujian dilakukan untuk memverifikasi fungsionalitas Webmin sebagai antarmuka 
 
 \subsection{Hasil Pengujian}
 
-\begin{table}[H]
-	\centering
-	\caption{Hasil Pengujian Webmin Integration}
-	\begin{tabular}{|c|c|}
-		\hline
-		Fungsi Pengujian & Hasil \\
-		\hline
-		Akses Dashboard Webmin & Berhasil \\
-		Monitoring Resource Server & Berhasil \\
-		Manajemen Container Docker & Berhasil \\
-		Konfigurasi Firewall & Berhasil \\
-		\hline
-	\end{tabular}
-\end{table}
+\begin{center}
+	[Tabel hasil pengujian]
+\end{center}
 
 Integrasi Webmin mempermudah pemeliharaan server dengan menyediakan akses visual yang andal untuk manajemen sistem operasi dan container.
 
@@ -298,20 +288,9 @@ Pengujian dilakukan untuk memvalidasi performa Laravel Reverb sebagai server Web
 
 \subsection{Hasil Pengujian}
 
-\begin{table}[H]
-	\centering
-	\caption{Hasil Pengujian Laravel Reverb}
-	\begin{tabular}{|c|c|}
-		\hline
-		Metrik Pengujian & Hasil \\
-		\hline
-		Koneksi WebSocket Client & Berhasil \\
-		Broadcasting Event Telemetri & Berhasil \\
-		Latensi Pengiriman Pesan ($<$ 200 ms) & Berhasil \\
-		Penggunaan Memori & Stabil \\
-		\hline
-	\end{tabular}
-\end{table}
+\begin{center}
+	[Tabel hasil pengujian]
+\end{center}
 
 Pengujian ini memvalidasi bahwa Laravel Reverb mampu menyalurkan data telemetri dan status kamera secara instan dengan overhead server yang sangat rendah.
 
@@ -321,20 +300,9 @@ Pengujian dilakukan untuk mengukur keandalan protokol MQTT over WSS dalam menjag
 
 \subsection{Hasil Pengujian}
 
-\begin{table}[H]
-	\centering
-	\caption{Hasil Pengujian MQTT over WSS}
-	\begin{tabular}{|c|c|}
-		\hline
-		Kondisi Pengujian & Hasil \\
-		\hline
-		Koneksi Secure SSL/TLS (Port 8084) & Berhasil \\
-		Pengiriman Gambar Terenkripsi & Berhasil \\
-		Auto-Reconnect saat Sinyal Lemah & Berhasil \\
-		Keep-Alive Heartbeat & Berhasil \\
-		\hline
-	\end{tabular}
-\end{table}
+\begin{center}
+	[Tabel hasil pengujian]
+\end{center}
 
 Penerapan enkripsi MQTT over WSS berjalan stabil dan mekanisme pemulihan koneksi otomatis berhasil diuji tanpa kebocoran data.
 
@@ -344,20 +312,9 @@ Pengujian dilakukan untuk memverifikasi kemampuan pembaruan kode program (firmwa
 
 \subsection{Hasil Pengujian}
 
-\begin{table}[H]
-	\centering
-	\caption{Hasil Pengujian OTA Firmware}
-	\begin{tabular}{|c|c|}
-		\hline
-		Tahapan Pengujian & Hasil \\
-		\hline
-		Cek Versi Firmware Baru & Berhasil \\
-		Unduh Berkas Biner (.bin) & Berhasil \\
-		Verifikasi Integritas File & Berhasil \\
-		Flashing dan Restart Otomatis & Berhasil \\
-		\hline
-	\end{tabular}
-\end{table}
+\begin{center}
+	[Tabel hasil pengujian]
+\end{center}
 
 Mekanisme OTA berhasil melakukan pembaruan firmware secara otomatis dan memulihkan koneksi perangkat setelah proses restart selesai.
 
@@ -367,43 +324,21 @@ Pengujian dilakukan untuk menguji efektivitas event scheduler MySQL dalam member
 
 \subsection{Hasil Pengujian}
 
-\begin{table}[H]
-	\centering
-	\caption{Hasil Pengujian Retensi MySQL}
-	\begin{tabular}{|c|c|}
-		\hline
-		Kriteria Pengujian & Hasil \\
-		\hline
-		Eksekusi Scheduler Harian & Berhasil \\
-		Penghapusan Log Telemetri ($>$ 30 Hari) & Berhasil \\
-		Integritas Relasi Tabel & Terjaga \\
-		Optimasi Ukuran Storage & Berhasil \\
-		\hline
-	\end{tabular}
-\end{table}
+\begin{center}
+	[Tabel hasil pengujian]
+\end{center}
 
 Mekanisme retensi MySQL berjalan sesuai jadwal dan terbukti berhasil mencegah akumulasi data yang berlebihan pada penyimpanan database.
 
 \section{Pengujian Pembersihan Otomatis MinIO}
 
-Pengujian dilakukan untuk memvalidasi kebijakan lifecycle bucket MinIO dalam menghapus berkas citra deteksi gerakan secara berkala.
+Pengujian dilakukan untuk memvalidasi performa Laravel Scheduler dalam memanggil perintah pembersihan objek pada bucket MinIO untuk menghapus berkas citra deteksi gerakan secara berkala.
 
 \subsection{Hasil Pengujian}
 
-\begin{table}[H]
-	\centering
-	\caption{Hasil Pengujian Pembersihan MinIO}
-	\begin{tabular}{|c|c|}
-		\hline
-		Parameter Pengujian & Hasil \\
-		\hline
-		Identifikasi Objek Kedaluwarsa & Berhasil \\
-		Penghapusan Otomatis Citra & Berhasil \\
-		Sinkronisasi Metadata DB & Berhasil \\
-		Penghematan Ruang Penyimpanan & Berhasil \\
-		\hline
-	\end{tabular}
-\end{table}
+\begin{center}
+	[Tabel hasil pengujian]
+\end{center}
 
 Pembersihan otomatis pada MinIO berjalan stabil, berhasil mereduksi konsumsi penyimpanan disk pada server Intel NUC.
 
@@ -413,20 +348,9 @@ Pengujian dilakukan untuk mengevaluasi fungsionalitas dan isolasi kontainer laya
 
 \subsection{Hasil Pengujian}
 
-\begin{table}[H]
-	\centering
-	\caption{Hasil Pengujian Layanan Deteksi}
-	\begin{tabular}{|c|c|}
-		\hline
-		Komponen Pengujian & Hasil \\
-		\hline
-		Startup Container Layanan & Berhasil \\
-		Pemrosesan Frame Antrean & Berhasil \\
-		Komunikasi via API Internal & Berhasil \\
-		Isolasi Resource CPU/RAM & Berhasil \\
-		\hline
-	\end{tabular}
-\end{table}
+\begin{center}
+	[Tabel hasil pengujian]
+\end{center}
 
 Deployment layanan deteksi dalam kontainer terpisah terbukti efektif menjaga kestabilan platform utama saat beban pemrosesan citra meningkat.
 
@@ -434,4 +358,4 @@ Deployment layanan deteksi dalam kontainer terpisah terbukti efektif menjaga kes
 
 Berdasarkan seluruh pengujian yang telah dilakukan, sistem berhasil memenuhi kebutuhan yang telah ditentukan pada tahap perancangan. Implementasi MQTT over WSS menjamin transmisi data telemetri dan gambar secara aman dan stabil. Penggunaan Laravel Reverb sebagai server WebSocket memampukan penyajian informasi telemetri dan deteksi secara instan dengan latensi minimal. Penerapan motion detection pada edge dikombinasikan dengan layanan deteksi penyusup terisolasi di server berhasil meningkatkan keandalan sistem pengawasan tanpa memberikan beban berlebih pada ESP32-CAM.
 
-Selain itu, efisiensi server Intel NUC meningkat secara signifikan melalui kebijakan retensi MySQL dan pembersihan otomatis objek MinIO, yang membatasi konsumsi ruang penyimpanan. Dukungan OTA firmware, integrasi Webmin, dan deployment Cloudflared Tunnel secara keseluruhan menyempurnakan aspek kemudahan pemeliharaan dan keamanan akses sistem.
+Selain itu, efisiensi server Intel NUC meningkat secara signifikan melalui kebijakan retensi MySQL dan pembersihan otomatis objek MinIO berbasis Laravel Scheduler, yang membatasi konsumsi ruang penyimpanan. Dukungan OTA firmware, integrasi Webmin, dan deployment Cloudflared Tunnel secara keseluruhan menyempurnakan aspek kemudahan pemeliharaan dan keamanan akses sistem.

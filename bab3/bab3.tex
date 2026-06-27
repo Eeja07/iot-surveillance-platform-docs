@@ -92,7 +92,7 @@ Tabel utama yang digunakan meliputi:
 
 \subsection{Perancangan Motion Detection}
 
-Motion detection digunakan untuk mendeteksi perubahan kondisi pada area pengamatan. Metode ini bekerja dengan membandingkan frame yang diperoleh kamera terhadap frame sebelumnya. Apabila perubahan yang terdeteksi melebihi nilai ambang batas yang telah ditentukan, sistem akan menganggap terdapat aktivitas pada area pengawasan dan melakukan proses penyimpanan data serta pengiriman notifikasi.
+Motion detection dirancang untuk berjalan langsung secara lokal pada perangkat keras ESP32-CAM (sisi edge) guna mendeteksi perubahan kondisi pada area pengamatan sebelum data citra dikirimkan ke server. Metode ini bekerja dengan membandingkan frame yang diperoleh kamera terhadap frame sebelumnya. Apabila perubahan yang terdeteksi melebihi nilai ambang batas yang telah ditentukan, sistem akan menganggap terdapat aktivitas pada area pengawasan dan memicu proses pengambilan serta pengiriman data gambar.
 
 \subsection{Perancangan Monitoring Telemetri}
 
@@ -162,7 +162,7 @@ Mekanisme retensi basis data MySQL diimplementasikan dengan membuat prosedur ter
 
 \subsection{Implementasi Pembersihan Otomatis MinIO}
 
-Pembersihan otomatis pada MinIO Object Storage diimplementasikan melalui kebijakan siklus hidup objek (lifecycle policy) untuk menghapus berkas citra deteksi lama secara terjadwal guna menghemat ruang penyimpanan.
+Pembersihan otomatis pada MinIO Object Storage diimplementasikan menggunakan perintah konsol Laravel (Artisan Command) yang dijalankan secara berkala oleh Laravel Scheduler untuk menghapus berkas citra deteksi lama secara terjadwal guna menghemat ruang penyimpanan.
 
 \subsection{Deployment Layanan Deteksi}
 
