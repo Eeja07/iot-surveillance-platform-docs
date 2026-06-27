@@ -125,23 +125,23 @@ Pengujian dilakukan untuk memastikan website mampu menerima pembaruan data secar
 
 Website berhasil memperbarui informasi tanpa memerlukan proses refresh halaman sehingga meningkatkan pengalaman pengguna dalam melakukan monitoring.
 
-\section{Pengujian Motion Detection}
+\section{Pengujian Deteksi Gerakan dan Deteksi Penyusup}
 
-Pengujian dilakukan untuk mengetahui kemampuan sistem dalam mendeteksi aktivitas pada area pengawasan.
+Pengujian dilakukan untuk mengetahui keandalan alur deteksi bertingkat (detection pipeline) asinkron yang memadukan deteksi gerakan (BackgroundSubtractorMOG2) dan deteksi penyusup (YOLO11n) dalam memproses citra hasil akuisisi ESP32-CAM yang disimpan pada MinIO Object Storage.
 
 \subsection{Skenario Pengujian}
 
 \begin{table}[H]
 	\centering
-	\caption{Skenario Pengujian Motion Detection}
-	\begin{tabular}{|c|l|}
+	\caption{Skenario Pengujian Deteksi Bertingkat}
+	\begin{tabular}{|c|l|l|}
 		\hline
-		No & Kondisi \\
+		No & Kondisi Pergerakan & Target Deteksi Objek \\
 		\hline
-		1 & Tidak terdapat pergerakan \\
-		2 & Pergerakan kecil \\
-		3 & Pergerakan sedang \\
-		4 & Pergerakan besar \\
+		1 & Tidak terdapat pergerakan & Tidak memicu motion\_events \\
+		2 & Pergerakan non-manusia & Memicu motion\_events, YOLO11n mengabaikan \\
+		3 & Manusia melintas perlahan & Memicu motion\_events, YOLO11n memicu detection\_events \\
+		4 & Manusia melintas cepat & Memicu motion\_events, YOLO11n memicu detection\_events \\
 		\hline
 	\end{tabular}
 \end{table}
@@ -150,20 +150,19 @@ Pengujian dilakukan untuk mengetahui kemampuan sistem dalam mendeteksi aktivitas
 
 \begin{table}[H]
 	\centering
-	\caption{Hasil Pengujian Motion Detection}
-	\begin{tabular}{|c|c|}
+	\caption{Hasil Pengujian Deteksi Bertingkat}
+	\begin{tabular}{|c|c|c|}
 		\hline
-		Kondisi & Hasil \\
+		Kondisi Pengujian & Status Motion Event & Status Detection Event \\
 		\hline
-		Tidak Ada Gerakan & Tidak Terdeteksi \\
-		Gerakan Kecil & Terdeteksi \\
-		Gerakan Sedang & Terdeteksi \\
-		Gerakan Besar & Terdeteksi \\
+		Tanpa Pergerakan & Tidak Aktif & Tidak Aktif \\
+		Gerakan Non-Manusia & Aktif & Tidak Aktif (Diabaikan YOLO11n) \\
+		Manusia Melintas & Aktif & Aktif (Terdeteksi Manusia) \\
 		\hline
 	\end{tabular}
 \end{table}
 
-Hasil pengujian menunjukkan bahwa sistem mampu mendeteksi perubahan kondisi pada area pengawasan dan menghasilkan event yang digunakan untuk penyimpanan data serta pengiriman notifikasi.
+Hasil pengujian memvalidasi bahwa alur deteksi bertingkat asinkron pada FastAPI Detection Service berhasil menyaring pergerakan non-manusia melalui kombinasi BackgroundSubtractorMOG2 dan YOLO11n, serta menyimpan kejadian deteksi (detection\_events) secara persisten di basis data.
 
 \section{Pengujian Notifikasi Mobile}
 
@@ -344,7 +343,7 @@ Pembersihan otomatis pada MinIO berjalan stabil, berhasil mereduksi konsumsi pen
 
 \section{Pengujian Deployment Layanan Deteksi}
 
-Pengujian dilakukan untuk mengevaluasi fungsionalitas dan isolasi kontainer layanan deteksi penyusup berbasis visi komputer di Docker.
+Pengujian dilakukan untuk mengevaluasi fungsionalitas dan isolasi kontainer layanan deteksi berbasis FastAPI (FastAPI Detection Service) yang memproses algoritma BackgroundSubtractorMOG2 dan YOLO11n secara terpisah menggunakan QueueWorker dan BackgroundTasks.
 
 \subsection{Hasil Pengujian}
 
@@ -356,6 +355,6 @@ Deployment layanan deteksi dalam kontainer terpisah terbukti efektif menjaga kes
 
 \section{Analisis Hasil}
 
-Berdasarkan seluruh pengujian yang telah dilakukan, sistem berhasil memenuhi kebutuhan yang telah ditentukan pada tahap perancangan. Implementasi MQTT over WSS menjamin transmisi data telemetri dan gambar secara aman dan stabil. Penggunaan Laravel Reverb sebagai server WebSocket memampukan penyajian informasi telemetri dan deteksi secara instan dengan latensi minimal. Penerapan motion detection dan deteksi penyusup yang didelegasikan ke layanan deteksi terisolasi di server terbukti berhasil meningkatkan keandalan sistem pengawasan tanpa memberikan beban komputasi berlebih pada perangkat ESP32-CAM yang berdaya rendah.
+Berdasarkan seluruh pengujian yang telah dilakukan, sistem berhasil memenuhi kebutuhan yang telah ditentukan pada tahap perancangan. Implementasi MQTT over WSS menjamin transmisi data telemetri dan gambar secara aman dan stabil. Penggunaan Laravel Reverb sebagai server WebSocket memampukan penyajian informasi telemetri dan deteksi secara instan dengan latensi minimal. Penerapan alur deteksi bertingkat (detection pipeline) berbasis FastAPI di server yang mengombinasikan BackgroundSubtractorMOG2 untuk deteksi gerakan dan YOLO11n untuk deteksi penyusup terbukti berhasil meningkatkan keandalan sistem pengawasan tanpa memberikan beban komputasi berlebih pada perangkat ESP32-CAM yang berdaya rendah.
 
 Selain itu, efisiensi server Intel NUC meningkat secara signifikan melalui kebijakan retensi MySQL dan pembersihan otomatis objek MinIO berbasis Laravel Scheduler, yang membatasi konsumsi ruang penyimpanan. Dukungan OTA firmware, integrasi Webmin, dan deployment Cloudflared Tunnel secara keseluruhan menyempurnakan aspek kemudahan pemeliharaan dan keamanan akses sistem.

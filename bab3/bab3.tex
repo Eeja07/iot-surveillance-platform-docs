@@ -70,11 +70,11 @@ Arsitektur sistem yang dibangun memperluas infrastruktur MIOTVision terdahulu, y
 %	\label{fig:arsitektur}
 %%\end{figure}
 
-Pada arsitektur tersebut, ESP32-CAM berfungsi untuk melakukan akuisisi citra, pengumpulan telemetri, dan publikasi MQTT over WSS ke broker EMQX. Data gambar yang masuk kemudian diteruskan oleh backend Laravel ke layanan deteksi (detection service) terpisah di server Intel NUC. Di dalam layanan deteksi, citra dianalisis secara berurutan melalui algoritma deteksi gerakan (motion detection) dan deteksi penyusup (intruder detection). Jika terdeteksi adanya aktivitas atau penyusupan, status terupdate akan disiarkan ke dashboard website secara real-time via Laravel Reverb dan notifikasi dikirimkan ke aplikasi mobile.
+Pada arsitektur tersebut, perangkat ESP32-CAM melakukan akuisisi citra, pengumpulan telemetri, dan publikasi data melalui protokol MQTT over WSS menuju broker EMQX. Server backend Laravel yang bertindak sebagai subscriber menerima data citra tersebut lalu menyimpannya ke object storage MinIO secara terpusat. Selanjutnya, backend Laravel meneruskan permintaan analisis secara asinkron ke FastAPI Detection Service yang berjalan secara terisolasi. Di dalam FastAPI Detection Service, QueueWorker memproses antrean citra menggunakan BackgroundTasks secara asinkron. Citra diproses melalui modul deteksi gerakan (motion detection) berbasis BackgroundSubtractorMOG2 dengan motion thresholding. Jika terdeteksi adanya gerakan, sistem memicu event deteksi gerakan (motion\_events) dan melanjutkan citra ke modul deteksi penyusup (intruder detection) menggunakan model YOLO11n. Apabila objek manusia teridentifikasi, event deteksi penyusup (detection\_events) akan dikirimkan kembali ke Laravel untuk dipersisten ke MySQL, disiarkan secara real-time ke web browser klien via Laravel Reverb, serta dikirimkan sebagai push notification ke aplikasi mobile Flutter.
 
 \subsection{Perancangan Alur Komunikasi Data}
 
-Proses komunikasi data dimulai dari akuisisi citra dan pengumpulan data telemetri oleh ESP32-CAM, yang kemudian dipublikasikan melalui protokol MQTT over WSS ke broker EMQX. Backend Laravel menerima data tersebut, menyimpan data telemetri ke MySQL dan berkas citra ke MinIO. Citra tersebut kemudian diteruskan ke layanan deteksi terisolasi di server untuk menjalankan deteksi gerakan (motion detection) dan deteksi penyusup (intruder detection). Hasil analisis kemudian dikirimkan secara real-time ke antarmuka website menggunakan Laravel Reverb, serta ke aplikasi mobile melalui layanan push notification.
+Proses komunikasi data berjalan sesuai alur deteksi terintegrasi: ESP32-CAM melakukan akuisisi citra and publikasi MQTT over WSS menuju broker EMQX. Pesan tersebut diterima oleh backend Laravel untuk disimpan ke object storage MinIO. Citra pada MinIO kemudian diakses oleh FastAPI Detection Service secara asinkron. Di dalam service tersebut, modul motion detection berbasis BackgroundSubtractorMOG2 mengevaluasi perubahan piksel. Jika ambang batas gerakan terlampaui, diproduksi motion\_events dan citra diteruskan ke model YOLO11n untuk klasifikasi manusia. Jika terklasifikasi sebagai penyusup, dihasilkan detection\_events yang dikirimkan ke Laravel API persistence, disimpan ke MySQL database, disiarkan via Laravel Reverb ke website monitoring, dan dikirimkan sebagai push notification ke aplikasi mobile Flutter.
 
 \subsection{Perancangan Basis Data}
 
@@ -92,7 +92,7 @@ Tabel utama yang digunakan meliputi:
 
 \subsection{Perancangan Motion Detection}
 
-Motion detection dirancang untuk berjalan pada layanan deteksi (detection service) di server Intel NUC. Alur ini menerima data citra hasil akuisisi ESP32-CAM yang dikirimkan melalui broker MQTT, lalu membandingkan frame citra yang baru masuk terhadap frame citra sebelumnya secara asinkron. Apabila perubahan piksel antar frame melebihi nilai ambang batas yang ditentukan, sistem menganggap terdapat aktivitas gerakan pada area pengawasan dan melanjutkan citra ke tahap deteksi penyusup (intruder detection).
+Modul motion detection berjalan secara asinkron dalam FastAPI Detection Service di server Intel NUC. Modul ini mengambil gambar dari MinIO dan memprosesnya menggunakan BackgroundSubtractorMOG2 untuk segmentasi latar belakang. Apabila luas area gerakan melebihi parameter motion thresholding yang ditentukan, modul ini mengonfirmasi adanya pergerakan (motion\_events) dan secara otomatis meneruskan frame citra tersebut ke model YOLO11n.
 
 \subsection{Perancangan Monitoring Telemetri}
 
@@ -118,7 +118,7 @@ Layanan yang dijalankan meliputi:
 
 \begin{figure}[H]
 \centering
-[PLACEHOLDER_IMAGE]
+[PLACEHOLDER IMAGE]
 \caption{Skema Infrastruktur Kontainer Server}
 \label{fig:docker_deployment}
 \end{figure}
@@ -129,7 +129,7 @@ Cloudflared Tunnel digunakan untuk menyediakan akses publik terhadap website dan
 
 \begin{figure}[H]
 \centering
-[PLACEHOLDER_IMAGE]
+[PLACEHOLDER IMAGE]
 \caption{Diagram Alur Akses Aman Cloudflared Tunnel}
 \label{fig:cloudflared_tunnel}
 \end{figure}
@@ -140,7 +140,7 @@ Webmin digunakan untuk membantu proses administrasi server melalui antarmuka ber
 
 \begin{figure}[H]
 \centering
-[PLACEHOLDER_IMAGE]
+[PLACEHOLDER IMAGE]
 \caption{Dashboard Administrasi Webmin}
 \label{fig:webmin_dashboard}
 \end{figure}
@@ -151,7 +151,7 @@ Website monitoring dikembangkan menggunakan framework frontend yang terhubung de
 
 \begin{figure}[H]
 \centering
-[PLACEHOLDER_IMAGE]
+[PLACEHOLDER IMAGE]
 \caption{Halaman Dashboard Website MIOTVision}
 \label{fig:website_monitoring}
 \end{figure}
@@ -162,18 +162,18 @@ Aplikasi mobile berbasis Flutter yang telah dirintis sebelumnya ditingkatkan fun
 
 \begin{figure}[H]
 \centering
-[PLACEHOLDER_IMAGE]
+[PLACEHOLDER IMAGE]
 \caption{Antarmuka Aplikasi Mobile Flutter}
 \label{fig:flutter_app}
 \end{figure}
 
 \subsection{Implementasi Deteksi Gerakan dan Deteksi Penyusup}
 
-Deteksi gerakan (motion detection) diimplementasikan di dalam layanan deteksi (detection service) terpisah pada server Intel NUC dengan membandingkan perbedaan nilai intensitas piksel antar frame citra hasil akuisisi ESP32-CAM yang diterima secara berurutan. Setelah gerakan terdeteksi, citra tersebut diproses lebih lanjut oleh modul deteksi penyusup (intruder detection) untuk mengidentifikasi adanya objek manusia secara real-time.
+Layanan deteksi (detection service) diimplementasikan menggunakan framework FastAPI yang berjalan secara asinkron menggunakan BackgroundTasks dan QueueWorker. Deteksi gerakan (motion detection) dilakukan menggunakan algoritma BackgroundSubtractorMOG2 pada citra yang ditarik dari MinIO Object Storage. Apabila hasil segmentasi latar belakang melewati parameter motion thresholding yang ditentukan, maka motion\_events akan dipicu. Selanjutnya, citra dilewatkan ke model YOLO11n untuk mengklasifikasi ada tidaknya objek manusia (intruder detection). Ketika objek terverifikasi, detail peristiwa berupa detection\_events dikirim kembali ke Laravel API persistence untuk disimpan di basis data MySQL.
 
 \begin{figure}[H]
 \centering
-[PLACEHOLDER_IMAGE]
+[PLACEHOLDER IMAGE]
 \caption{Diagram Alur Deteksi Asinkron Detection Service}
 \label{fig:detection_service}
 \end{figure}
@@ -184,7 +184,7 @@ Pemantauan telemetri perangkat dilakukan secara periodik dengan mengirimkan data
 
 \begin{figure}[H]
 \centering
-[PLACEHOLDER_IMAGE]
+[PLACEHOLDER IMAGE]
 \caption{Visualisasi Widget Telemetri Perangkat}
 \label{fig:telemetry_widget}
 \end{figure}
@@ -195,7 +195,7 @@ Notifikasi real-time diimplementasikan menggunakan layanan push notification unt
 
 \begin{figure}[H]
 \centering
-[PLACEHOLDER_IMAGE]
+[PLACEHOLDER IMAGE]
 \caption{Penerimaan Push Notification pada Handphone}
 \label{fig:push_notification}
 \end{figure}
@@ -214,7 +214,7 @@ Dukungan pembaruan firmware secara nirkabel (Over-the-Air/OTA) diimplementasikan
 
 \begin{figure}[H]
 \centering
-[PLACEHOLDER_IMAGE]
+[PLACEHOLDER IMAGE]
 \caption{Halaman Manajemen Firmware OTA pada Backend}
 \label{fig:ota_management}
 \end{figure}
@@ -229,7 +229,7 @@ Pembersihan otomatis pada MinIO Object Storage diimplementasikan menggunakan per
 
 \subsection{Deployment Layanan Deteksi}
 
-Layanan deteksi penyusup dijalankan sebagai kontainer Docker terpisah di server Intel NUC untuk memisahkan beban kerja komputasi visi komputer dari server aplikasi utama guna menjamin kestabilan platform.
+Layanan deteksi di-deploy sebagai kontainer Docker terpisah (FastAPI Detection Service) pada server Intel NUC. Konfigurasi container menggunakan Dockerfile dan Docker Compose untuk memisahkan alur kerja visi komputer (BackgroundSubtractorMOG2 dan YOLO11n) dari server Laravel backend, guna memastikan isolasi resource CPU/RAM.
 
 \section{Pengujian Sistem}
 

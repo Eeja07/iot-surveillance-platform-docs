@@ -95,9 +95,21 @@ Cloudflared Tunnel merupakan layanan yang memungkinkan akses ke server internal 
 
 Webmin merupakan aplikasi administrasi server berbasis web yang digunakan untuk mempermudah pengelolaan sistem operasi Linux. Melalui Webmin, administrator dapat melakukan konfigurasi layanan, pemantauan sumber daya, manajemen pengguna, dan berbagai tugas administrasi lainnya melalui antarmuka grafis. Pada penelitian ini, Webmin digunakan sebagai alat bantu dalam pengelolaan server Intel NUC.
 
+\subsection{FastAPI}
+
+FastAPI merupakan framework web modern berbasis Python yang dirancang untuk membangun API dengan performa tinggi menggunakan standard Python type hints. Kelebihan FastAPI meliputi eksekusi asinkron bawaan (async/await), dukungan asinkron BackgroundTasks, dan validasi data cepat menggunakan Pydantic. Pada penelitian ini, FastAPI digunakan sebagai layanan deteksi (detection service) terpisah untuk mengeksekusi analisis visi komputer menggunakan QueueWorker secara asinkron.
+
+\subsection{BackgroundSubtractorMOG2}
+
+BackgroundSubtractorMOG2 merupakan algoritma segmentasi latar belakang (background subtraction) berbasis Gaussian Mixture Model (GMM). Algoritma ini memisahkan objek bergerak (foreground) dari latar belakang statis (background) dengan menghitung perbedaan intensitas piksel antar frame citra yang berurutan. Pada penelitian ini, BackgroundSubtractorMOG2 diimplementasikan di server dalam layanan deteksi berbasis FastAPI untuk mendeteksi gerakan (motion detection) secara cepat dengan motion thresholding.
+
+\subsection{YOLO11n}
+
+YOLO (You Only Look Once) versi 11 (YOLO11n) merupakan model deteksi objek satu tahap (single-stage) berbasis deep learning yang sangat efisien dan akurat. Varian "n" (nano) dirancang untuk kebutuhan pemrosesan real-time dengan overhead memori minimal. Pada penelitian ini, YOLO11n berjalan pada layanan deteksi di server untuk melakukan klasifikasi deteksi penyusup (intruder detection) terhadap objek manusia setelah pemicu gerakan (motion event) terdeteksi oleh BackgroundSubtractorMOG2.
+
 \subsection{Motion Detection}
 
-Motion Detection merupakan teknik yang digunakan untuk mendeteksi adanya perubahan pada suatu area pengamatan berdasarkan perbedaan antar frame citra. Metode ini memungkinkan sistem mengidentifikasi aktivitas atau pergerakan tanpa memerlukan proses klasifikasi objek yang kompleks. Pada penelitian ini, motion detection digunakan sebagai pemicu pengambilan gambar dan pengiriman notifikasi ketika terdeteksi aktivitas pada area pemantauan.
+Motion Detection merupakan teknik yang digunakan untuk mendeteksi adanya perubahan pada suatu area pengamatan berdasarkan perbedaan antar frame citra. Dalam penelitian ini, motion detection dilakukan pada server Intel NUC menggunakan algoritma BackgroundSubtractorMOG2 yang dijalankan di dalam FastAPI Detection Service, untuk memproses citra hasil akuisisi ESP32-CAM secara asinkron.
 
 \subsection{Push Notification}
 

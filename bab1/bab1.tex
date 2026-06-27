@@ -56,7 +56,7 @@ Penelitian ini diharapkan dapat memberikan kontribusi dan manfaat sebagai beriku
 \section{Kontribusi dan Kebaruan Penelitian}
 Penelitian ini memberikan beberapa kontribusi penting dalam memperluas (extends) dan meningkatkan (enhances) platform monitoring CCTV MIOTVision yang telah dirintis pada studi terdahulu. Kontribusi utama dari penelitian ini didefinisikan sebagai berikut:
 \begin{enumerate}
-	\item Mengimplementasikan alur deteksi bertingkat (detection pipeline) yang memproses deteksi gerakan (motion detection) dan deteksi penyusup (intruder detection) pada layanan deteksi terpisah di server menggunakan citra hasil akuisisi ESP32-CAM.
+	\item Mengimplementasikan alur deteksi bertingkat (detection pipeline) asinkron berbasis FastAPI menggunakan BackgroundSubtractorMOG2 untuk deteksi gerakan dan YOLO11n untuk deteksi penyusup (objek manusia) berdasarkan citra hasil akuisisi ESP32-CAM.
 	\item Mengembangkan sistem pemantauan telemetri perangkat secara real-time dan mekanisme notifikasi real-time ke aplikasi mobile.
 	\item Meningkatkan stabilitas komunikasi data melalui optimalisasi protokol MQTT over WSS dan integrasi Laravel Reverb untuk komunikasi real-time pada web platform.
 	\item Menyediakan dukungan pembaruan firmware secara nirkabel (OTA support) untuk mempermudah pemeliharaan perangkat kamera secara jarak jauh.
@@ -64,4 +64,4 @@ Penelitian ini memberikan beberapa kontribusi penting dalam memperluas (extends)
 	\item Mengoptimalkan deployment sistem melalui penerapan Cloudflared Tunnel untuk akses publik yang aman serta deployment layanan deteksi secara terisolasi pada server Intel NUC.
 \end{enumerate}
 
-Kebaruan (novelty) dari penelitian ini terletak pada integrasi alur deteksi bertingkat (detection pipeline) yang memisahkan secara jelas beban kerja akuisisi citra pada perangkat edge berdaya rendah (ESP32-CAM) dengan komputasi deteksi gerakan (motion detection) dan deteksi penyusup (intruder detection) secara asinkron pada kontainer Docker terisolasi di server Intel NUC. Melalui pipa data MQTT over WSS dan Laravel Reverb, platform ini mampu mendistribusikan telemetri operasional secara aman dan menyajikan visualisasi deteksi secara instan dengan beban komputasi minimal pada sisi mikrokontroler.
+Kebaruan (novelty) dari penelitian ini terletak pada integrasi alur deteksi bertingkat (detection pipeline) asinkron berbasis FastAPI, BackgroundTasks, dan QueueWorker yang memisahkan secara jelas beban kerja akuisisi citra pada perangkat edge berdaya rendah (ESP32-CAM) dengan pemrosesan deteksi gerakan (BackgroundSubtractorMOG2) dan klasifikasi manusia (YOLO11n) di server Intel NUC. Alur asinkron ini mengalirkan citra dari ESP32-CAM via MQTT over WSS menuju broker EMQX dan Laravel, dilanjutkan ke object storage MinIO untuk kemudian dianalisis oleh FastAPI Detection Service secara asinkron. Hasil deteksi tersebut disiarkan secara real-time via Laravel Reverb dan push notification Flutter.
