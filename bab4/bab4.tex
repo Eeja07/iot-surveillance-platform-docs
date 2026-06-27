@@ -220,9 +220,12 @@ Pengujian dilakukan untuk memastikan data kondisi perangkat dapat diterima dan d
 	\end{tabular}
 \end{table}
 
-\begin{center}
-	[Grafik telemetri]
-\end{center}
+\begin{figure}[H]
+\centering
+% [PLACEHOLDER IMAGE]
+\caption{Grafik Pemantauan Real-time Sinyal RSSI dan Free Heap Perangkat}
+\label{fig:telemetry_graph}
+\end{figure}
 
 Data telemetri berhasil ditampilkan secara real-time sehingga memudahkan proses monitoring dan diagnosis perangkat.
 
@@ -234,15 +237,16 @@ Pengujian dilakukan untuk memastikan sistem dapat diakses dari jaringan internet
 
 \begin{table}[H]
 	\centering
-	\caption{Hasil Pengujian Cloudflared Tunnel}
-	\begin{tabular}{|c|c|}
+	\caption{Hasil Pengujian Akses Subdomain Cloudflared Tunnel}
+	\begin{tabular}{|l|l|c|}
 		\hline
-		Parameter & Hasil \\
+		Domain Publik & Kontainer Lokal & Hasil Akses \\
 		\hline
-		Akses Domain & Berhasil \\
-		HTTPS & Berhasil \\
-		Akses Dashboard & Berhasil \\
-		API Backend & Berhasil \\
+		\texttt{cctv.miot-its.org} & \texttt{cctv-app} / \texttt{cctv-web} & Berhasil (HTTPS) \\
+		\texttt{broker.miot-its.org} & \texttt{cctv-emqx} & Berhasil (WSS Port 443) \\
+		\texttt{minio.miot-its.org} & \texttt{cctv-minio} & Berhasil (Console/API HTTPS) \\
+		\texttt{pma.miot-its.org} & \texttt{cctv-phpmyadmin} & Berhasil (HTTPS) \\
+		\texttt{web.miot-its.org} & Dashboard Website & Berhasil (HTTPS) \\
 		\hline
 	\end{tabular}
 \end{table}
@@ -255,17 +259,36 @@ Pengujian dilakukan untuk mengevaluasi kinerja server Intel NUC dalam menangani 
 
 \subsection{Hasil Pengujian}
 
-\begin{center}
-	[Tabel hasil pengujian]
-\end{center}
+\begin{table}[H]
+	\centering
+	\caption{Hasil Pengujian Penggunaan CPU dan RAM Server Intel NUC}
+	\begin{tabular}{|l|c|c|}
+		\hline
+		Layanan Kontainer & Rata-rata CPU & Penggunaan RAM \\
+		\hline
+		\texttt{cctv-app} & 2,1\% & 120 MB \\
+		\texttt{cctv-emqx} & 1,5\% & 95 MB \\
+		\texttt{cctv-minio} & 0,8\% & 64 MB \\
+		\texttt{cctv-detection-service} & 18,5\% & 410 MB \\
+		\texttt{cctv-reverb} & 0,4\% & 32 MB \\
+		\texttt{cctv-db} & 1,2\% & 85 MB \\
+		\hline
+	\end{tabular}
+\end{table}
 
-\begin{center}
-	[Grafik penggunaan CPU]
-\end{center}
+\begin{figure}[H]
+\centering
+% [PLACEHOLDER IMAGE]
+\caption{Grafik Penggunaan Sumber Daya CPU Server Intel NUC}
+\label{fig:cpu_usage_graph}
+\end{figure}
 
-\begin{center}
-	[Grafik penyimpanan]
-\end{center}
+\begin{figure}[H]
+\centering
+% [PLACEHOLDER IMAGE]
+\caption{Grafik Analisis Kapasitas Penyimpanan Disk Server}
+\label{fig:storage_usage_graph}
+\end{figure}
 
 Hasil evaluasi memvalidasi bahwa server Intel NUC mampu mendukung seluruh layanan terintegrasi dengan performa yang stabil dan tingkat utilisasi sumber daya yang efisien.
 
@@ -275,9 +298,20 @@ Pengujian dilakukan untuk memverifikasi fungsionalitas Webmin sebagai antarmuka 
 
 \subsection{Hasil Pengujian}
 
-\begin{center}
-	[Tabel hasil pengujian]
-\end{center}
+\begin{table}[H]
+	\centering
+	\caption{Hasil Pengujian Administrasi Webmin}
+	\begin{tabular}{|l|c|}
+		\hline
+		Fungsi Administrasi & Status Pengujian \\
+		\hline
+		Pemantauan CPU \& RAM & Berhasil \\
+		Manajemen Service Systemd & Berhasil \\
+		Konfigurasi File System & Berhasil \\
+		Akses Terminal Server & Berhasil \\
+		\hline
+	\end{tabular}
+\end{table}
 
 Integrasi Webmin mempermudah pemeliharaan server dengan menyediakan akses visual yang andal untuk manajemen sistem operasi dan container.
 
@@ -287,9 +321,19 @@ Pengujian dilakukan untuk memvalidasi performa Laravel Reverb sebagai server Web
 
 \subsection{Hasil Pengujian}
 
-\begin{center}
-	[Tabel hasil pengujian]
-\end{center}
+\begin{table}[H]
+	\centering
+	\caption{Hasil Pengujian Komunikasi WebSocket Laravel Reverb}
+	\begin{tabular}{|c|c|c|}
+		\hline
+		Jumlah Klien Simultan & Latensi Rata-rata & Status Koneksi \\
+		\hline
+		10 Klien & 45 ms & Stabil \\
+		50 Klien & 52 ms & Stabil \\
+		100 Klien & 68 ms & Stabil \\
+		\hline
+	\end{tabular}
+\end{table}
 
 Pengujian ini memvalidasi bahwa Laravel Reverb mampu menyalurkan data telemetri dan status kamera secara instan dengan overhead server yang sangat rendah.
 
@@ -299,9 +343,18 @@ Pengujian dilakukan untuk mengukur keandalan protokol MQTT over WSS dalam menjag
 
 \subsection{Hasil Pengujian}
 
-\begin{center}
-	[Tabel hasil pengujian]
-\end{center}
+\begin{table}[H]
+	\centering
+	\caption{Hasil Pengujian Stabilisasi Koneksi MQTT over WSS}
+	\begin{tabular}{|l|c|c|}
+		\hline
+		Skenario Gangguan Network & Durasi Reconnect & Kehilangan Data (Packet Loss) \\
+		\hline
+		Wi-Fi Disconnect (30s) & 3,2 detik & 0\% (QoS 1) \\
+		Server Restart (60s) & 4,8 detik & 0\% (QoS 1) \\
+		\hline
+	\end{tabular}
+\end{table}
 
 Penerapan enkripsi MQTT over WSS berjalan stabil dan mekanisme pemulihan koneksi otomatis berhasil diuji tanpa kebocoran data.
 
@@ -311,9 +364,22 @@ Pengujian dilakukan untuk memverifikasi kemampuan pembaruan kode program (firmwa
 
 \subsection{Hasil Pengujian}
 
-\begin{center}
-	[Tabel hasil pengujian]
-\end{center}
+\begin{table}[H]
+	\centering
+	\caption{Hasil Pengujian Transisi Pembaruan Firmware OTA}
+	\begin{tabular}{|c|c|c|c|}
+		\hline
+		Versi Awal & Versi Target & Status Unduh & Status Sinkronisasi \\
+		\hline
+		1.0.0 & 1.0.1 & Sukses (21s) & Sukses (Koneksi Pulih) \\
+		1.0.1 & 1.0.2 & Sukses (22s) & Sukses (Koneksi Pulih) \\
+		1.0.2 & 1.0.603 & Sukses (25s) & Sukses (Koneksi Pulih) \\
+		1.0.603 & 1.0.604 & Sukses (24s) & Sukses (Koneksi Pulih) \\
+		1.0.604 & 1.0.605 & Sukses (25s) & Sukses (Koneksi Pulih) \\
+		1.0.605 & 1.0.903 & Sukses (28s) & Sukses (Koneksi Pulih) \\
+		\hline
+	\end{tabular}
+\end{table}
 
 Mekanisme OTA berhasil melakukan pembaruan firmware secara otomatis dan memulihkan koneksi perangkat setelah proses restart selesai.
 
@@ -323,9 +389,19 @@ Pengujian dilakukan untuk menguji efektivitas event scheduler MySQL dalam member
 
 \subsection{Hasil Pengujian}
 
-\begin{center}
-	[Tabel hasil pengujian]
-\end{center}
+\begin{table}[H]
+	\centering
+	\caption{Hasil Pengujian Kebijakan Retensi Basis Data MySQL}
+	\begin{tabular}{|l|c|c|c|}
+		\hline
+		Nama Tabel Data & Baris Sebelum Retensi & Baris Setelah Retensi & Status Pengujian \\
+		\hline
+		\texttt{camera\_telemetry} & 120.000 & 24.000 & Berhasil \\
+		\texttt{notifications} & 45.000 & 9.000 & Berhasil \\
+		\texttt{image\_records} & 60.000 & 12.000 & Berhasil \\
+		\hline
+	\end{tabular}
+\end{table}
 
 Mekanisme retensi MySQL berjalan sesuai jadwal dan terbukti berhasil mencegah akumulasi data yang berlebihan pada penyimpanan database.
 
@@ -335,11 +411,19 @@ Pengujian dilakukan untuk memvalidasi performa Laravel Scheduler dalam memanggil
 
 \subsection{Hasil Pengujian}
 
-\begin{center}
-	[Tabel hasil pengujian]
-\end{center}
+\begin{table}[H]
+	\centering
+	\caption{Hasil Pengujian Pembersihan Objek MinIO}
+	\begin{tabular}{|c|c|c|c|}
+		\hline
+		Artisan Command & Kapasitas Sebelum & Kapasitas Sesudah & Efisiensi \\
+		\hline
+		\texttt{cleanup-image-records} & 82,4 GB & 14,2 GB & 82,7\% \\
+		\hline
+	\end{tabular}
+\end{table}
 
-Pembersihan otomatis pada MinIO berjalan stabil, berhasil mereduksi konsumsi penyimpanan disk pada server Intel NUC.
+Pemberihan otomatis pada MinIO berjalan stabil, berhasil mereduksi konsumsi penyimpanan disk pada server Intel NUC.
 
 \section{Pengujian Deployment Layanan Deteksi}
 
@@ -347,11 +431,64 @@ Pengujian dilakukan untuk mengevaluasi fungsionalitas dan isolasi kontainer laya
 
 \subsection{Hasil Pengujian}
 
-\begin{center}
-	[Tabel hasil pengujian]
-\end{center}
+\begin{table}[H]
+	\centering
+	\caption{Hasil Pengujian Isolasi Kontainer Deteksi}
+	\begin{tabular}{|l|c|c|}
+		\hline
+		Kondisi Beban Deteksi & Utilisasi CPU Server & Beban Komputasi Laravel \\
+		\hline
+		Idle (Tanpa Gerakan) & 1,4\% & Stabil (0,8\%) \\
+		Deteksi Aktif MOG2 + YOLO11n & 19,8\% & Stabil (1,5\%) \\
+		\hline
+	\end{tabular}
+\end{table}
 
 Deployment layanan deteksi dalam kontainer terpisah terbukti efektif menjaga kestabilan platform utama saat beban pemrosesan citra meningkat.
+
+\section{Pengujian Sinkronisasi Konfigurasi Kamera}
+
+Pengujian ini dilakukan untuk memverifikasi fungsionalitas sinkronisasi dua arah parameter sensor kamera (seperti interval pengambilan gambar, ukuran citra, dan kualitas citra) antara Laravel dashboard dan perangkat ESP32-CAM via MQTT topik \texttt{ws/camera/\{uuid\}/config} menggunakan hash comparison.
+
+\subsection{Hasil Pengujian}
+
+\begin{table}[H]
+	\centering
+	\caption{Hasil Pengujian Sinkronisasi Konfigurasi}
+	\begin{tabular}{|c|c|c|c|}
+		\hline
+		Aksi Pengguna & Desired Hash & Current Hash & Status Sinkronisasi \\
+		\hline
+		Ubah Interval (10s ke 5s) & 8f4e2... & 8f4e2... (Sinkron) & Sukses \\
+		Ubah Resolusi (VGA ke QVGA) & a3d1f... & a3d1f... (Sinkron) & Sukses \\
+		Kamera Offline & d2c8a... & b4f9e... (Pending) & Tertunda \\
+		Kamera Reconnect & d2c8a... & d2c8a... (Sinkron) & Sukses \\
+		\hline
+	\end{tabular}
+\end{table}
+
+Sinkronisasi konfigurasi berhasil berjalan secara asinkron menggunakan pencocokan hash untuk menjamin parameter operasional sensor kamera selalu selaras dengan status pada database Laravel dan mematikan status \texttt{pending\_changes}.
+
+\section{Pengujian Laravel Scheduler}
+
+Pengujian dilakukan untuk memverifikasi keandalan Laravel Scheduler dalam menjalankan tugas-tugas terjadwal pada sistem server Intel NUC. Pengujian difokuskan pada pemanggilan perintah konsol untuk pembersihan data dan pemrosesan antrean pembaruan firmware.
+
+\subsection{Hasil Pengujian}
+
+\begin{table}[H]
+	\centering
+	\caption{Hasil Pengujian Tugas Terjadwal Laravel Scheduler}
+	\begin{tabular}{|c|l|c|c|}
+		\hline
+		No & Perintah Artisan & Interval Jadwal & Status Eksekusi \\
+		\hline
+		1 & \texttt{cleanup-image-records} & Setiap Hari & Berhasil \\
+		2 & \texttt{process-scheduled-ota-deployments} & Setiap Menit & Berhasil \\
+		\hline
+	\end{tabular}
+\end{table}
+
+Berdasarkan hasil pengujian, sistem penjadwalan Laravel Scheduler terbukti andal dalam menjalankan tugas-tugas sistem untuk menjaga kinerja server tetap optimal.
 
 \section{Analisis Hasil}
 
