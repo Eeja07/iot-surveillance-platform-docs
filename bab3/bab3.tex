@@ -74,7 +74,7 @@ Pada arsitektur tersebut, perangkat ESP32-CAM melakukan akuisisi citra, pengumpu
 
 \subsection{Perancangan Alur Komunikasi Data}
 
-Proses komunikasi data berjalan sesuai alur deteksi terintegrasi: ESP32-CAM melakukan akuisisi citra and publikasi MQTT over WSS menuju broker EMQX. Pesan tersebut diterima oleh backend Laravel untuk disimpan ke object storage MinIO. Citra pada MinIO kemudian diakses oleh FastAPI Detection Service secara asinkron. Di dalam service tersebut, modul motion detection berbasis BackgroundSubtractorMOG2 mengevaluasi perubahan piksel. Jika ambang batas gerakan terlampaui, diproduksi motion\_events dan citra diteruskan ke model YOLO11n untuk klasifikasi manusia. Jika terklasifikasi sebagai penyusup, dihasilkan detection\_events yang dikirimkan ke Laravel API persistence, disimpan ke MySQL database, disiarkan via Laravel Reverb ke website monitoring, dan dikirimkan sebagai push notification ke aplikasi mobile Flutter.
+Proses komunikasi data berjalan sesuai alur deteksi terintegrasi: ESP32-CAM melakukan akuisisi citra and publikasi MQTT over WSS menuju broker EMQX. Pesan tersebut diterima oleh backend Laravel untuk disimpan ke object storage MinIO. Citra pada MinIO kemudian diakses oleh FastAPI Detection Service secara asinkron. Di dalam service tersebut, modul motion detection berbasis BackgroundSubtractorMOG2 mengevaluasi perubahan piksel. Jika ambang batas gerakan terlampaui, diproduksi motion\_events dan citra diteruskan ke model YOLO11n untuk klasifikasi manusia. Jika terklasifikasi sebagai penyusup, dihasilkan detection\_events yang dikirimkan ke Laravel API persistence, disimpan ke MySQL database, disiarkan via Laravel Reverb ke website monitoring, dan dikirimkan sebagai push notification ke aplikasi mobile Flutter. Selain itu, alur komunikasi juga mencakup topik MQTT \texttt{ws/camera/\{uuid\}/config} untuk pertukaran status konfigurasi perangkat secara dua arah dan \texttt{ws/camera/\{uuid\}/ota} untuk instruksi pembaruan firmware secara asinkron.
 
 \subsection{Perancangan Basis Data}
 
@@ -83,12 +83,18 @@ Basis data dirancang untuk menyimpan informasi pengguna, perangkat kamera, data 
 Tabel utama yang digunakan meliputi:
 
 \begin{enumerate}
-	\item Tabel users
-	\item Tabel cameras
-	\item Tabel image\_records
-	\item Tabel camera\_telemetry
-	\item Tabel notifications
+	\item Tabel \texttt{users}
+	\item Tabel \texttt{cameras} (menyimpan parameter sinkronisasi: \texttt{desired\_config}, \texttt{current\_config}, \texttt{desired\_config\_hash}, \texttt{current\_config\_hash}, dan \texttt{pending\_changes})
+	\item Tabel \texttt{image\_records}
+	\item Tabel \texttt{camera\_telemetry}
+	\item Tabel \texttt{notifications}
+	\item Tabel \texttt{ota\_firmwares} (metadata biner firmware OTA)
+	\item Tabel \texttt{ota\_deployments} (riwayat deployment pembaruan)
 \end{enumerate}
+
+\subsection{Perancangan Sinkronisasi Konfigurasi Kamera}
+
+Perancangan sinkronisasi konfigurasi dirancang agar perubahan parameter kamera pada dashboard web dapat diterapkan ke perangkat ESP32-CAM secara asinkron. Perubahan parameter disimpan pada kolom \texttt{desired\_config} dan hash-nya pada \texttt{desired\_config\_hash}, lalu dikirim melalui topik MQTT \texttt{ws/camera/\{uuid\}/config}. Mikrokontroler menerapkan pengaturan tersebut dan mengirim balik hash aktualnya (\texttt{current\_config\_hash}) untuk mematikan status \texttt{pending\_changes}.
 
 \subsection{Perancangan Motion Detection}
 
@@ -106,14 +112,17 @@ Tahap implementasi dilakukan dengan merealisasikan seluruh rancangan yang telah 
 
 Server utama menggunakan Intel NUC dengan sistem operasi Debian 12. Seluruh layanan dijalankan menggunakan Docker Container untuk mempermudah proses deployment dan pengelolaan sistem.
 
-Layanan yang dijalankan meliputi:
+Layanan kontainer Docker yang dijalankan meliputi:
 
 \begin{enumerate}
-	\item Laravel Backend
-	\item MySQL Database
-	\item MinIO Object Storage
-	\item EMQX MQTT Broker
-	\item WebSocket Service
+	\item \texttt{cctv-app} (Backend Laravel)
+	\item \texttt{cctv-web} (Web Server Nginx)
+	\item \texttt{cctv-db} (MySQL Database)
+	\item \texttt{cctv-emqx} (EMQX MQTT Broker)
+	\item \texttt{cctv-minio} (MinIO Object Storage)
+	\item \texttt{cctv-reverb} (Laravel Reverb WebSocket)
+	\item \texttt{cctv-detection-service} (FastAPI Detection Service)
+	\item \texttt{cctv-phpmyadmin} (Database Client phpMyAdmin)
 \end{enumerate}
 
 \begin{figure}[H]
@@ -125,7 +134,7 @@ Layanan yang dijalankan meliputi:
 
 \subsection{Implementasi Cloudflared Tunnel}
 
-Cloudflared Tunnel digunakan untuk menyediakan akses publik terhadap website dan API tanpa membuka port secara langsung pada router. Konfigurasi dilakukan dengan menghubungkan server ke layanan Cloudflare Tunnel sehingga domain dapat diakses secara aman melalui internet.
+Cloudflared Tunnel digunakan untuk menyediakan akses publik terhadap website dan API tanpa membuka port secara langsung pada router. Konfigurasi dilakukan dengan memetakan lalu lintas internet aman (HTTPS) ke masing-masing kontainer lokal menggunakan domain publik: \texttt{cctv.miot-its.org} (aplikasi utama), \texttt{broker.miot-its.org} (WSS broker), \texttt{minio.miot-its.org} (object storage), \texttt{pma.miot-its.org} (phpMyAdmin), dan \texttt{web.miot-its.org} (monitoring frontend).
 
 \begin{figure}[H]
 \centering
@@ -169,7 +178,7 @@ Aplikasi mobile berbasis Flutter yang telah dirintis sebelumnya ditingkatkan fun
 
 \subsection{Implementasi Deteksi Gerakan dan Deteksi Penyusup}
 
-Layanan deteksi (detection service) diimplementasikan menggunakan framework FastAPI yang berjalan secara asinkron menggunakan BackgroundTasks dan QueueWorker. Deteksi gerakan (motion detection) dilakukan menggunakan algoritma BackgroundSubtractorMOG2 pada citra yang ditarik dari MinIO Object Storage. Apabila hasil segmentasi latar belakang melewati parameter motion thresholding yang ditentukan, maka motion\_events akan dipicu. Selanjutnya, citra dilewatkan ke model YOLO11n untuk mengklasifikasi ada tidaknya objek manusia (intruder detection). Ketika objek terverifikasi, detail peristiwa berupa detection\_events dikirim kembali ke Laravel API persistence untuk disimpan di basis data MySQL.
+Layanan deteksi diimplementasikan pada kontainer terpisah menggunakan framework FastAPI dengan antrean asinkron pada \texttt{worker.py} dan fungsi visi komputer pada \texttt{handlers/detection.py} berbasis \texttt{BackgroundTasks}. Deteksi gerakan dilakukan oleh algoritma BackgroundSubtractorMOG2 dengan konfigurasi parameter \texttt{history=500}, \texttt{varThreshold=16}, dan \texttt{detectShadows=False} untuk memicu \texttt{motion\_events}. Citra kemudian ditarik dari bucket \texttt{cctv/} di bawah direktori \texttt{camera/\{uuid\}} pada MinIO untuk diproses oleh model YOLO11n. Klasifikasi penyusup dilakukan dengan memfilter objek manusia menggunakan kondisi \texttt{class\_id == 0}. Ketika terverifikasi, sistem menghasilkan \texttt{detection\_events} yang dikirim ke Laravel API persistence untuk disimpan di MySQL.
 
 \begin{figure}[H]
 \centering
@@ -225,7 +234,7 @@ Mekaniseme retensi basis data MySQL diimplementasikan dengan membuat prosedur te
 
 \subsection{Implementasi Pembersihan Otomatis MinIO}
 
-Pembersihan otomatis pada MinIO Object Storage diimplementasikan menggunakan perintah konsol Laravel (Artisan Command) yang dijalankan secara berkala oleh Laravel Scheduler untuk menghapus berkas citra deteksi lama secara terjadwal guna menghemat ruang penyimpanan.
+Pembersihan otomatis pada MinIO Object Storage diimplementasikan menggunakan perintah konsol Laravel \texttt{cleanup-image-records} yang dijalankan secara berkala oleh Laravel Scheduler untuk menghapus berkas citra deteksi lama secara terjadwal di bawah direktori \texttt{camera/\{uuid\}} pada bucket \texttt{cctv/} guna menghemat ruang penyimpanan. Selain itu, Laravel Scheduler juga menjalankan Artisan Command \texttt{process-scheduled-ota-deployments} secara berkala untuk mengeksekusi antrean pembaruan firmware kamera dari direktori \texttt{firmware/\{version\}}.
 
 \subsection{Deployment Layanan Deteksi}
 
